@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MimeTypeRepository extends JpaRepository<MimeType, Long> {
 
-     List<MimeType> findByMimeType(String mimeType);
+     List<MimeType> findByMimeTypeString(String mimeTypeString);
      MimeType findFirstByFileExtension(String fileExtension);
 
 }

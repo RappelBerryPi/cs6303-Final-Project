@@ -17,9 +17,9 @@ public interface UploadedFileRepository extends JpaRepository<UploadedFile, Long
 
     List<UploadedFile> findByFileNameEndingWith(String fileExtension);
 
-    Page<UploadedFile> findByMimeTypeMimeTypeStartingWith(String mimeTypeMajor, Pageable pageable);
+    Page<UploadedFile> findByMimeTypeMimeTypeStringStartingWith(String mimeTypeMajor, Pageable pageable);
 
-    List<UploadedFile> findAllByMimeTypeMimeTypeStartingWith(String mimeTypeMajor);
+    List<UploadedFile> findAllByMimeTypeMimeTypeStringStartingWith(String mimeTypeMajor);
 
     List<UploadedFile> findByMimeTypeIsNull();
 }

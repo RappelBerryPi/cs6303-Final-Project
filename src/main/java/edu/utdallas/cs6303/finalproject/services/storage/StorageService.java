@@ -59,7 +59,7 @@ public class StorageService implements StorageServiceInterface {
         Path actualFile = this.storageProperties.getLocationAsPath(StorageServiceSizeEnum.ROOT).resolve(fileName);
         Files.copy(inputStream, actualFile, StandardCopyOption.REPLACE_EXISTING);
 
-        var threads = imageResizer.ConvertAndResizeImage(fileName);
+        var threads = imageResizer.convertAndResizeImage(fileName);
         for (Thread t : threads) {
             try {
                 t.join();
@@ -111,8 +111,7 @@ public class StorageService implements StorageServiceInterface {
     @Override
     public Stream<String> getFileStream() {
         StorageServiceSizeEnum size       = StorageServiceSizeEnum.ROOT;
-        Stream<String>         fileStream = this.loadAll(size).map(path -> path.getFileName().relativize(this.storageProperties.getLocationAsPath(size)).toString());
-        return fileStream;
+        return this.loadAll(size).map(path -> path.getFileName().relativize(this.storageProperties.getLocationAsPath(size)).toString());
     }
 
     @Override

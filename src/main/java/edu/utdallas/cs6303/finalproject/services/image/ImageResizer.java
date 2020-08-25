@@ -105,7 +105,7 @@ public class ImageResizer implements ImageResizerInterface {
     }
 
     @Override
-    public List<Thread> ConvertAndResizeImage(String fileName) {
+    public List<Thread> convertAndResizeImage(String fileName) {
         ImageResizer resizer    = new ImageResizer();
         List<Thread> threads    = new LinkedList<>();
         var          ActualFile = this.storageService.load(fileName, StorageServiceSizeEnum.ROOT);

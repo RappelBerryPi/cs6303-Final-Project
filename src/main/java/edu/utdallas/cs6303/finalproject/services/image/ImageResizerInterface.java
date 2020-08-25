@@ -13,7 +13,7 @@ public interface ImageResizerInterface {
 
     BufferedImage resizeImage(BufferedImage image, int width, int height);
 
-    List<Thread> ConvertAndResizeImage(String fileName);
+    List<Thread> convertAndResizeImage(String fileName);
 
     boolean resize(Path inFile, Path outFile, int width, int height);
 

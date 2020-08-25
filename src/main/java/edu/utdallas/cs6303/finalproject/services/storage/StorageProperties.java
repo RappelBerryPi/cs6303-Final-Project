@@ -10,6 +10,7 @@ import java.util.Map;
 
 import edu.utdallas.cs6303.finalproject.services.storage.enums.StorageServiceSizeEnum;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("storage")
@@ -46,7 +47,7 @@ public class StorageProperties {
             if (path == null) {
                 path = uri.toString();
                 if (!(path.startsWith("jar:") && path.endsWith("!/"))) {
-                    System.err.println("UNKNOWN URI: " + uri.toString() + " " + p.toString());
+                    LoggerFactory.getLogger(StorageProperties.class).error("UNKNOWN URI: {} {}", uri, p);
                     return p;
                 }
                 // jar:file:/C:/Users/leppa/workspace/Projects/ImperfectMommy/target/main-0.0.1-SNAPSHOT.jar!/BOOT-INF/classes!/

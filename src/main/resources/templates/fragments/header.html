@@ -1,0 +1,21 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+  <head>
+  </head>
+
+  <body>
+    <header th:fragment="header">
+      <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+          Final Project
+        </a>
+        <div class="nav-right" sec:authorize="isAuthenticated()">
+          <form th:action="@{/logout}" class="form-inline my-2 my-lg-0" method="post">
+            <span th:inline="text" class="navbar-text" style="margin-right: 10px;"> Hello [[${currentUser.firstName}]]! </span>
+              <input class="btn btn-outline-secondary my-2 my-sm-0" type="submit" value="Sign Out"/>
+          </form>
+        </div>
+      </nav>
+    </header>
+  </body>
+</html>

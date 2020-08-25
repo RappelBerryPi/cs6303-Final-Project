@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5" lang="en-us">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <title>Final Project</title>
+    <link rel="stylesheet" type="text/css" href="/css/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/hamburgers.min.css">
+    <link rel="stylesheet" type="text/css" href="/fonts/fontawesome-5.10.2/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/site.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/emoji-toolkit@5.0.5/extras/css/joypixels.min.css" />
+    <script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="/js/popper.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/site.min.js"></script>
+  </head>
+
+  <body>
+    <div th:replace="fragments/header :: header"></div>
+    <div layout:fragment="content" style="flex: 1 0 auto;"></div>
+    <footer class="container-fluid" style="flex-shrink: 0;">
+      <div class="row">
+        <div class="col">
+          <h5>
+            © 2020 rba200001@utdallas.edu All Rights Reserved
+            </h2>
+        </div>
+      </div>
+
+    </footer>
+  </body>
+
+</html>
