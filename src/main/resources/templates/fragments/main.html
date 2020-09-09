@@ -25,9 +25,7 @@
     <footer class="container-fluid" style="flex-shrink: 0;">
       <div class="row">
         <div class="col">
-          <h5>
-            © 2020 rba200001@utdallas.edu All Rights Reserved
-            </h2>
+          <h5 th:text="'©' + ${#dates.year(#dates.createNow())} + ' UTDallas CS6303 Group 3. All Rights Reserved'"> </h5>
         </div>
       </div>
 

@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html lang="en_us" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{fragments/main}"
+    xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <title>Login</title>
+    <style>
+        body {
+            background-image: url("/Files/login_background.jpg");
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container-fluid" style="height: 90vh; position: relative;">
+        <section class="centered-text single-form rounded" style="background-color: white;">
+            <div sec:authorize="isAnonymous()" class="row" style="margin-bottom: 10px">
+                <h1 class="center"> Please Sign In</h1>
+            </div>
+            <div class="row">
+                <p class="center text-danger" th:if="${param.error}">
+                    Invalid username and password.
+                </p>
+                <p class="center text-info" th:if="${param.logout}">
+                    You have been logged out.
+                </p>
+            </div>
+            <div class="row mtop-bottom-10-px">
+                <form th:action="@{/login}" method="post" class="center">
+                    <div class="form-group">
+                        <input type="text" name="username" class="form-control" aria-label="The user name to log in."
+                            autofocus placeholder="User Name" />
+                        <label class="floating-label text-secondary" for="username">User Name</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" class="form-control" aria-label="The user password."
+                            placeholder="Password" />
+                        <label class="floating-label text-secondary" for="password">Password</label>
+                    </div>
+                    <input type="submit" value="Sign In" />
+                </form>
+            </div>
+        </section>
+    </div>
+</body>
+
+</html>

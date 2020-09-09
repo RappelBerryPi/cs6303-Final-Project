@@ -30,3 +30,57 @@ footer {
     margin-right: 0px;
     margin-left: auto;
 }
+
+.form-control {
+    transition: transform .25s, border-color .25s ease-in-out;
+    border-radius: 5px;
+    background-color: transparent;
+    z-index: 1;
+    position: relative;
+
+    &+.floating-label {
+        position: absolute;
+        top: 0.35em;
+        left: .75em;
+
+        display: inline-block;
+
+        width: auto;
+        margin: 0;
+
+        transition: transform .25s ease-in-out, opacity .25s ease-in-out;
+        transform: translate(0, 0) scale(1);
+        user-select: none;
+    }
+
+    &:focus,
+    &:not(:placeholder-shown) {
+        &+.floating-label {
+            z-index: 2500;
+
+            transition: transform .25s ease-in-out;
+            transform: translate(0, -1.25em) scale(.9);
+            background-color: inherit;
+        }
+    }
+
+    &::placeholder {
+        color: transparent;
+    }
+}
+
+.form-group {
+    position: relative;
+    background-color: white;
+}
+
+.centered-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.center {
+  text-align: center;
+  margin: 0 auto;
+}

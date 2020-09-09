@@ -1,14 +1,30 @@
 <!DOCTYPE HTML>
-<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{fragments/main}" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{fragments/main}"
+    xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
-    <head>
-        <title>Final Project</title>
-    </head>
+<head>
+    <title>Final Project</title>
+</head>
 
-    <body>
-        <div layout:fragment="content" class="container-fluid">
-            <h1>Starting Page</h1>
+<body>
+    <div layout:fragment="content" class="container-fluid">
+        <h1>Starting Page</h1>
+        <a th:text="${myValue}" href="#"></a>
+        <h2 th:text="${mySecondValue}"></h2>
+        <div class="form-group">
+            <input type="number" class="form-control" id="exampleInputEmail1" aria-describedby="gmailHelp"
+                placeholder="Enter gmail">
+            <label for="exampleInputEmail1" class="floating-label text-secondary">Enter gmail</label>
+            <small id="gmailHelp" class="form-text text-muted">We'll never share your gmail with anyone else.</small>
         </div>
-    </body>
+        <div class="form-group">
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                placeholder="Enter email">
+            <label for="exampleInputEmail1" class="floating-label text-secondary">Enter email</label>
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+    </div>
+
+</body>
 
 </html>
