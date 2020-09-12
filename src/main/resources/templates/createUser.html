@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html lang="en_us" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{fragments/main}"
+    xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <title>createUser</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-image: url("/Files/login_background.jpg");
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .google-button,.google-button:active,.google-button:hover {
+            color: transparent;
+            background-position: center center;
+            background-size: cover;
+            height: 45px;
+        }
+
+        .google-button {
+            background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_normal_web@2x.png) no-repeat ;
+            background-size: cover;
+        }
+
+        .google-button:hover {
+            background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_focus_web@2x.png) no-repeat;
+            background-size: cover;
+        }
+
+        .google-button:active {
+            background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_pressed_web@2x.png) no-repeat;
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container-fluid" style="height: 90vh; position: relative;">
+        <section class="centered-text single-form rounded" style="background-color: white;">
+            <div sec:authorize="isAnonymous()" class="row" style="margin-bottom: 10px">
+                <h1 class="center"> Sign Up</h1>
+            </div>
+            <div class="row mtop-bottom-10-px">
+                <form th:action="@{/createUser}" method="post" class="center">
+                    <div class="form-group">
+                        <input type="text" name="EmailAddress" class="form-control" aria-label="The user name to log in."
+                            placeholder="Email Address" />
+                        <label class="floating-label text-secondary" for="EmailAddress">Email</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="username" class="form-control" aria-label="The user name to log in."
+                            placeholder="User Name" />
+                        <label class="floating-label text-secondary" for="username">User Name</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" class="form-control" aria-label="The user password."
+                            placeholder="Password" />
+                        <label class="floating-label text-secondary" for="password">Password</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="confirmPassword" class="form-control" aria-label="The user password."
+                            placeholder="Confirm Password" />
+                        <label class="floating-label text-secondary" for="confirmPassword">Confirm Password</label>
+                    </div>
+                    <input type="submit" value="Create" class="btn btn-info" th:formaction="@{/createUser}" />
+                </form>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col center">
+                    <button type="button" class="btn google-button" onclick="GoogleOAuth()"> 
+                        <i class="fab fa-google"></i> Sign in with Google
+                    </button>
+                </div>
+                <div class="col">
+                    <button id="github-button" class="btn btn-block btn-social btn-github btn-outline-dark" onclick="GithubOAuth()">
+                        <i class="fab fa-github"></i> Sign in with Github
+                    </button>
+                    <script>
+                        function GoogleOAuth() {
+                            window.location.href = "/oauth2/authorization/google";
+                        }
+                        function GithubOAuth() {
+                            window.location.href = "/oauth2/authorization/github";
+                        }
+                    </script>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

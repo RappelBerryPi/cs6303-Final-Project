@@ -145,4 +145,8 @@ public class User {
     public void unlockAccount() {
         this.locked = false;
     }
+
+    public static final String USER_NAME_REGEX_LOOSE = "^[A-Za-z0-9_]+$";
+    public static final String USER_NAME_NOT_MATCH_MESSAGE = "Please enter a valid Username.";
+    public static final String USER_NAME_REGEX_TIGHT = "^[A-Za-z][A-Za-z0-9_]{7,59}$";
 }

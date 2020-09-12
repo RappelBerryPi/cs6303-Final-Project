@@ -1,0 +1,25 @@
+<div th:fragment="errorInForm" class="errorModal modal fade" th:if="${#fields.hasErrors('*')}" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-dialog-centered modal-large" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title default-serif-font"> Error in Submission </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group default-serif-font">
+                    <li class="alert alert-danger list-group-item" th:each="err : ${#fields.errors('*')}" th:text="${err}"> </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $(".errorModal").modal("show");
+        });
+    </script>
+</div>

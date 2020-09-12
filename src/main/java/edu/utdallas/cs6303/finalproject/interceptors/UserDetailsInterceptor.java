@@ -7,6 +7,8 @@ import edu.utdallas.cs6303.finalproject.model.database.User;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.SmartView;
@@ -25,9 +27,15 @@ public class UserDetailsInterceptor extends HandlerInterceptorAdapter {
             User user = null;
             try {
                 SecurityContextImpl contextImpl = (SecurityContextImpl) request.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-                String userName = contextImpl.getAuthentication().getName();
-                if (userName != null) {
-                    user = userRepository.findByUserName(userName);
+                if (contextImpl.getAuthentication() instanceof OAuth2AuthenticationToken) {
+                    OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) contextImpl.getAuthentication();
+                    user = new User();
+                    user.setFirstName(token.getPrincipal().getAttribute("name"));
+                } else {
+                    String userName = contextImpl.getAuthentication().getName();
+                    if (userName != null) {
+                        user = userRepository.findByUserName(userName);
+                    }
                 }
             } catch (Exception e) {
                 // todo: nothing

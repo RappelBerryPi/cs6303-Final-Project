@@ -4,12 +4,35 @@
 
 <head>
     <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
     <style>
         body {
             background-image: url("/Files/login_background.jpg");
             background-position: center center;
             background-repeat: no-repeat;
             background-attachment: fixed;
+            background-size: cover;
+        }
+
+        .google-button,.google-button:active,.google-button:hover {
+            color: transparent;
+            background-position: center center;
+            background-size: cover;
+            height: 45px;
+        }
+
+        .google-button {
+            background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_normal_web@2x.png) no-repeat ;
+            background-size: cover;
+        }
+
+        .google-button:hover {
+            background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_focus_web@2x.png) no-repeat;
+            background-size: cover;
+        }
+
+        .google-button:active {
+            background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_pressed_web@2x.png) no-repeat;
             background-size: cover;
         }
     </style>
@@ -33,7 +56,7 @@
                 <form th:action="@{/login}" method="post" class="center">
                     <div class="form-group">
                         <input type="text" name="username" class="form-control" aria-label="The user name to log in."
-                            autofocus placeholder="User Name" />
+                            placeholder="User Name" />
                         <label class="floating-label text-secondary" for="username">User Name</label>
                     </div>
                     <div class="form-group">
@@ -41,11 +64,33 @@
                             placeholder="Password" />
                         <label class="floating-label text-secondary" for="password">Password</label>
                     </div>
-                    <input type="submit" value="Sign In" />
+                    <input type="submit" value="Sign In" class="btn btn-primary" />
+                    <input type="submit" value="Create New" class="btn btn-info" th:formaction="@{/createUser}" th:formmethod="GET" />
+                    <input type="submit" value="Forgot Password" class="btn btn-danger" th:formaction="@{/forgotPassword}" />
                 </form>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col center">
+                    <button type="button" class="btn google-button" onclick="GoogleOAuth()"> 
+                        <i class="fab fa-google"></i> Sign in with Google
+                    </button>
+                </div>
+                <div class="col">
+                    <button id="github-button" class="btn btn-block btn-social btn-github btn-outline-dark" onclick="GithubOAuth()">
+                        <i class="fab fa-github"></i> Sign in with Github
+                    </button>
+                    <script>
+                        function GoogleOAuth() {
+                            window.location.href = "/oauth2/authorization/google";
+                        }
+                        function GithubOAuth() {
+                            window.location.href = "/oauth2/authorization/github";
+                        }
+                    </script>
+                </div>
             </div>
         </section>
     </div>
 </body>
-
 </html>
