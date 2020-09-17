@@ -1,40 +1,33 @@
 package edu.utdallas.cs6303.finalproject.controllers;
 
-import java.util.ArrayList;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import javax.print.DocFlavor.URL;
+import javax.transaction.NotSupportedException;
 import javax.validation.Valid;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import edu.utdallas.cs6303.finalproject.model.OAuth.GoogleOAuth2User;
+import edu.utdallas.cs6303.finalproject.model.oauth.GithubOAuth2User;
+import edu.utdallas.cs6303.finalproject.model.oauth.GoogleOAuth2User;
 import edu.utdallas.cs6303.finalproject.model.validation.ForgotPasswordForm;
 
 @Controller
-@RequestMapping("/login")
+@RequestMapping(LoginController.REQUEST_MAPPING)
 public class LoginController {
 
-    @Autowired
-    private OAuth2AuthorizedClientService authorizedClientService;
+    public static final String REQUEST_MAPPING = "/login";
 
     @GetMapping({ "", "/" })
     public String index() {
@@ -42,35 +35,24 @@ public class LoginController {
     }
 
     @GetMapping("/loginSuccess")
-    public String getLoginInfo(@AuthenticationPrincipal OAuth2User principal) {
-        try {
-            java.net.URL url = principal.getAttribute("iss");
-            if (url.getHost().contains("google")) {
-                GoogleOAuth2User gPrincipal = new GoogleOAuth2User(principal);
+    public String getLoginInfo(@AuthenticationPrincipal OAuth2User principal) throws NotSupportedException, MalformedURLException {
+        URL url = principal.getAttribute("iss");
+        if (url == null) {
+            String strURL = principal.getAttribute("url");
+            if (strURL == null) {
+                throw new NotSupportedException("unable to get details from your provider. Please contact support.");
             }
-        } finally {
-
+            url = new URL(strURL);
         }
-        return "login";
-        // OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(
-        // authentication.getAuthorizedClientRegistrationId(),
-        // authentication.getName());
-        // String userInfoEndpointUri =
-        // client.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri();
-        // if (!StringUtils.isEmpty(userInfoEndpointUri)) {
-        // RestTemplate restTemplate = new RestTemplate();
-        // HttpHeaders headers = new HttpHeaders();
-        // headers.add(HttpHeaders.AUTHORIZATION, "Bearer " +
-        // client.getAccessToken().getTokenValue());
-        // HttpEntity entity = new HttpEntity("", headers);
-        // ResponseEntity <Map>response = restTemplate.exchange(userInfoEndpointUri,
-        // HttpMethod.GET, entity, Map.class);
-        // Map userAttributes = response.getBody();
-        // model.addAttribute("name", userAttributes.get("name"));
-        // LoggerFactory.getLogger(HomeController.class).info(userAttributes.get("name"));
-
-        // }
-        // return "loginSuccess";
+        if (url.getHost().contains("google")) {
+            GoogleOAuth2User gPrincipal = new GoogleOAuth2User(principal);
+            LoggerFactory.getLogger(LoginController.class).info(gPrincipal.getName());
+        } else if (url.getHost().contains("github")) {
+            GithubOAuth2User gPrincipal = new GithubOAuth2User(principal);
+            LoggerFactory.getLogger(LoginController.class).info(gPrincipal.getName());
+        }
+        throw new NotSupportedException("Need to add users to the database and link to an actual profile.");
+        //return "login";
     }
 
     @GetMapping("/createUser")
@@ -93,11 +75,11 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult." + FORGOT_PASSWORD_FORM_ATTRIBUTE_NAME, bindingResult);
             redirectAttributes.addFlashAttribute(FORGOT_PASSWORD_FORM_ATTRIBUTE_NAME, forgotPasswordForm);
-            return "redirect:/forgotPassword";
+            return "redirect:" + LoginController.REQUEST_MAPPING + "/forgotPassword";
         }
         LoggerFactory.getLogger(HomeController.class).info(forgotPasswordForm.getEmailAddress());
         LoggerFactory.getLogger(HomeController.class).info(forgotPasswordForm.getUserName());
-        return "redirect:/forgotPassword/2";
+        return "redirect:" + LoginController.REQUEST_MAPPING + "/forgotPassword/2";
     }
 
 }

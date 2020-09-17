@@ -65,14 +65,14 @@
                         <label class="floating-label text-secondary" for="password">Password</label>
                     </div>
                     <input type="submit" value="Sign In" class="btn btn-primary" />
-                    <input type="submit" value="Create New" class="btn btn-info" th:formaction="@{/createUser}" th:formmethod="GET" />
-                    <input type="submit" value="Forgot Password" class="btn btn-danger" th:formaction="@{/forgotPassword}" />
+                    <input type="submit" value="Create New" class="btn btn-info" th:formaction="@{/login/createUser}" th:formmethod="GET" />
+                    <input type="submit" value="Forgot Password" class="btn btn-danger" th:formaction="@{/login/forgotPassword}" th:formmethod="GET" />
                 </form>
             </div>
             <br />
             <div class="row">
                 <div class="col center">
-                    <button type="button" class="btn google-button" onclick="GoogleOAuth()"> 
+                    <button type="button" class="btn google-button" onclick="GoogleOAuth()">
                         <i class="fab fa-google"></i> Sign in with Google
                     </button>
                 </div>
