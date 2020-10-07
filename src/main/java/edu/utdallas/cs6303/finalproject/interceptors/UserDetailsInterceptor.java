@@ -5,10 +5,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import edu.utdallas.cs6303.finalproject.model.database.User;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.UserRepository;
+import edu.utdallas.cs6303.finalproject.services.oauth.OAuth2UserAuthenticationService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.SmartView;
@@ -21,6 +22,9 @@ public class UserDetailsInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    OAuth2UserAuthenticationService oAuth2UserAuthenticationService;
+
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         if (modelAndView != null && !isRedirectView(modelAndView)) {
@@ -29,8 +33,7 @@ public class UserDetailsInterceptor extends HandlerInterceptorAdapter {
                 SecurityContextImpl contextImpl = (SecurityContextImpl) request.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
                 if (contextImpl.getAuthentication() instanceof OAuth2AuthenticationToken) {
                     OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) contextImpl.getAuthentication();
-                    user = new User();
-                    user.setFirstName(token.getPrincipal().getAttribute("name"));
+                    user = oAuth2UserAuthenticationService.getUserFromOAuth2AuthenticationToken(token);
                 } else {
                     String userName = contextImpl.getAuthentication().getName();
                     if (userName != null) {

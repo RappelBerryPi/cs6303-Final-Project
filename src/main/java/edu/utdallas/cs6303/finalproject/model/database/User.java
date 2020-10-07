@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class User {
@@ -23,6 +24,11 @@ public class User {
     private String password;
     private boolean active;
     private boolean locked;
+
+    @OneToOne
+    private GithubOAuth2User githubOAuth2User;
+    @OneToOne
+    private GoogleOAuth2User googleOAuth2User;
 
     @ManyToMany
     @JoinTable(
@@ -149,4 +155,20 @@ public class User {
     public static final String USER_NAME_REGEX_LOOSE = "^[A-Za-z0-9_]+$";
     public static final String USER_NAME_NOT_MATCH_MESSAGE = "Please enter a valid Username.";
     public static final String USER_NAME_REGEX_TIGHT = "^[A-Za-z][A-Za-z0-9_]{7,59}$";
+
+    public GithubOAuth2User getGithubOAuth2User() {
+        return githubOAuth2User;
+    }
+
+    public void setGithubOAuth2User(GithubOAuth2User githubOAuth2User) {
+        this.githubOAuth2User = githubOAuth2User;
+    }
+
+    public GoogleOAuth2User getGoogleOAuth2User() {
+        return googleOAuth2User;
+    }
+
+    public void setGoogleOAuth2User(GoogleOAuth2User googleOAuth2User) {
+        this.googleOAuth2User = googleOAuth2User;
+    }
 }

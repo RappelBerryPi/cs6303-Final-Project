@@ -1,105 +1,125 @@
 <!DOCTYPE HTML>
 <html lang="en_us" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{fragments/main}"
-    xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
-<head>
-    <title>createUser</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background-image: url("/Files/login_background.jpg");
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-size: cover;
-        }
+    <head>
+        <title>createUser</title>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
+        <style>
+            body {
+                background-image: url("/Files/login_background.jpg");
+                background-position: center center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: cover;
+            }
+        </style>
+    </head>
 
-        .google-button,.google-button:active,.google-button:hover {
-            color: transparent;
-            background-position: center center;
-            background-size: cover;
-            height: 45px;
-        }
-
-        .google-button {
-            background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_normal_web@2x.png) no-repeat ;
-            background-size: cover;
-        }
-
-        .google-button:hover {
-            background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_focus_web@2x.png) no-repeat;
-            background-size: cover;
-        }
-
-        .google-button:active {
-            background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_pressed_web@2x.png) no-repeat;
-            background-size: cover;
-        }
-    </style>
-</head>
-
-<body>
-    <div layout:fragment="content" class="container-fluid" style="height: 90vh; position: relative;">
-        <section class="centered-text single-form rounded" style="background-color: white;">
-            <div sec:authorize="isAnonymous()" class="row" style="margin-bottom: 10px">
-                <h1 class="center"> Sign Up</h1>
-            </div>
-            <div class="row mtop-bottom-10-px">
-                <form th:action="@{/login/createUser}" method="post" class="center">
-                    <div class="form-group">
-                        <input type="text" name="EmailAddress" class="form-control" aria-label="The user name to log in."
-                            placeholder="Email Address" />
-                        <label class="floating-label text-secondary" for="EmailAddress">Email</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" name="username" class="form-control" aria-label="The user name to log in."
-                            placeholder="User Name" />
-                        <label class="floating-label text-secondary" for="username">User Name</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" name="password" class="form-control" aria-label="The user password."
-                            placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%\^&*\)\(+=._-]).{8,}" />
-                        <label class="floating-label text-secondary" for="password">Password</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" name="confirmPassword" class="form-control" aria-label="The user password Confirmation."
-                            placeholder="Confirm Password" required />
-                        <label class="floating-label text-secondary" for="confirmPassword">Confirm Password</label>
-                        <!-- TODO: Make things required and make it to where there are custom messages.-->
-                    </div>
-                    <input type="submit" value="Create" class="btn btn-info" th:formaction="@{/login/createUser}" />
-                </form>
-            </div>
-            <br />
-            <div class="row">
-                <div class="col center">
-                    <button type="button" class="btn google-button" onclick="GoogleOAuth()">
-                        <i class="fab fa-google"></i> Sign in with Google
-                    </button>
+    <body>
+        <div layout:fragment="content" class="container-fluid" style="height: 90vh; position: relative;">
+            <section class="centered-text single-form rounded" style="background-color: white;">
+                <div sec:authorize="isAnonymous()" class="row" style="margin-bottom: 10px">
+                    <h1 class="center"> Sign Up</h1>
                 </div>
-                <div class="col">
-                    <button id="github-button" class="btn btn-block btn-social btn-github btn-outline-dark" onclick="GithubOAuth()">
-                        <i class="fab fa-github"></i> Sign in with Github
-                    </button>
-                    <script>
-                        function GoogleOAuth() {
-                            window.location.href = "/oauth2/authorization/google";
-                        }
-                        function GithubOAuth() {
-                            window.location.href = "/oauth2/authorization/github";
-                        }
-                    </script>
+                <div class="row mtop-bottom-10-px">
+                    <form th:action="@{/login/createUser}" method="post" class="center">
+                        <div class="form-group">
+                            <input type="text" name="EmailAddress" class="form-control" aria-label="The user name to log in."
+                                   placeholder="Email Address" />
+                            <label class="floating-label text-secondary" for="EmailAddress">Email</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="username" class="form-control" aria-label="The user name to log in."
+                                   placeholder="User Name" />
+                            <label class="floating-label text-secondary" for="username">User Name</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="password" class="form-control" aria-label="The user password."
+                            placeholder="Password"
+                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%\^&*\)\(+=._-]).{8,}" />
+                            <label class="floating-label text-secondary" for="password">Password</label>
+                            <i id="passwordEye" style="position: absolute; right: 12px; top: 30%; z-index: 1;" class="fa fa-eye"></i>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="confirmPassword" class="form-control" aria-label="The user password Confirmation."
+                                   placeholder="Confirm Password" required />
+                            <label class="floating-label text-secondary" for="confirmPassword">Confirm Password</label>
+                        </div>
+                        <input type="submit" value="Create" class="btn btn-info" th:formaction="@{/login/createUser}" />
+                    </form>
                 </div>
-            </div>
-        </section>
-        <script>
-            $(function() {
-                $('input[name="password"]').change(function() {
-                    $('input[name="confirmPassword"]').attr("pattern","^" + $(this).val() + "$");
+                <br />
+                <div class="row">
+                    <div class="col center">
+                        <button type="button" class="btn google-button" onclick="GoogleOAuth()">
+                            <em class="fab fa-google"></em> Sign in with Google
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button id="github-button" class="btn btn-block btn-social btn-github btn-outline-dark" onclick="GithubOAuth()">
+                            <em class="fab fa-github"></em> Sign in with Github
+                        </button>
+                        <script>
+                            function GoogleOAuth() {
+                                window.location.href = "/oauth2/authorization/google";
+                            }
+                            function GithubOAuth() {
+                                window.location.href = "/oauth2/authorization/github";
+                            }
+                        </script>
+                    </div>
+                </div>
+            </section>
+            <script>
+                $(function () {
+                    function getText() {
+                        let text = "The password should: <ul class=\"no-style\" >" +
+                            validateRegex(/(?=.*[a-z])/, "contain a lowercase letter.") +
+                            validateRegex(/(?=.*[A-Z])/, "contain an uppercase letter.") +
+                            validateRegex(/(?=.*\d)/, "contain a number.") +
+                            validateRegex(/(?=.*[!@#\$%\^&*\)\(+=._-])/, "contain a special character.") +
+                            validateRegex(/.{8,}/, "be 8 or more characters long.") +
+                            "</ul>";
+                        return text;
+                    }
+
+                    function validateRegex(regex, message) {
+                        let classStr = "";
+                        if (regex.exec($('input[name="password"]').val())) {
+                            classStr = "fas fa-check";
+                        } else {
+                            classStr = "fas fa-ban";
+                        }
+                        return `<li><em class=\"${classStr}\"></em> ${message}</li>`
+                    }
+
+                    $('input[name="password"]').on("input",function () {
+                        $('input[name="confirmPassword"]').attr("pattern", "^" + $(this).val() + "$");
+                        $('div.popover-body').html(getText());
+                    }).popover({
+                        content: getText, html: true
+                    }).blur(function () {
+                        $(this).popover('hide');
+                    });
+                    $('input[name="password"]').on('invalid', function (event) {
+                        event.target.setCustomValidity('The Password must contain 1 uppercase character, 1 lowercase character, 1 number, and one special character and must be at least 8 characters long.');
+                    });
+                    $('input[name="confirmPassword"]').on('invalid', function (event) {
+                        event.target.setCustomValidity('The Passwords do not match');
+                    });
+                    $('#passwordEye').on('click',function(event) {
+                        if ($(this).hasClass("fa-eye-slash")) {
+                            $(this).siblings('input[type="text"]').attr("type","password");
+                        } else {
+                            $(this).siblings('input[type="password"]').attr("type","text");
+                        }
+                        $(this).toggleClass("fa-eye fa-eye-slash");
+                    })
                 });
-            });
 
-        </script>
-    </div>
-</body>
+            </script>
+        </div>
+    </body>
+
 </html>

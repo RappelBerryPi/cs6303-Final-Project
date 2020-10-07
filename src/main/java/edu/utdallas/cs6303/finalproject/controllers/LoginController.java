@@ -19,13 +19,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import edu.utdallas.cs6303.finalproject.model.oauth.GithubOAuth2User;
-import edu.utdallas.cs6303.finalproject.model.oauth.GoogleOAuth2User;
+import edu.utdallas.cs6303.finalproject.model.database.GithubOAuth2User;
+import edu.utdallas.cs6303.finalproject.model.database.GoogleOAuth2User;
+import edu.utdallas.cs6303.finalproject.model.database.repositories.GithubOAuth2UserRepository;
+import edu.utdallas.cs6303.finalproject.model.database.repositories.GoogleOAuth2UserRepository;
 import edu.utdallas.cs6303.finalproject.model.validation.ForgotPasswordForm;
+import edu.utdallas.cs6303.finalproject.services.oauth.OAuth2UserAuthenticationService;
 
 @Controller
 @RequestMapping(LoginController.REQUEST_MAPPING)
 public class LoginController {
+
+    @Autowired
+    private OAuth2UserAuthenticationService oAuth2UserAuthenticationService;
 
     public static final String REQUEST_MAPPING = "/login";
 
@@ -36,23 +42,8 @@ public class LoginController {
 
     @GetMapping("/loginSuccess")
     public String getLoginInfo(@AuthenticationPrincipal OAuth2User principal) throws NotSupportedException, MalformedURLException {
-        URL url = principal.getAttribute("iss");
-        if (url == null) {
-            String strURL = principal.getAttribute("url");
-            if (strURL == null) {
-                throw new NotSupportedException("unable to get details from your provider. Please contact support.");
-            }
-            url = new URL(strURL);
-        }
-        if (url.getHost().contains("google")) {
-            GoogleOAuth2User gPrincipal = new GoogleOAuth2User(principal);
-            LoggerFactory.getLogger(LoginController.class).info(gPrincipal.getName());
-        } else if (url.getHost().contains("github")) {
-            GithubOAuth2User gPrincipal = new GithubOAuth2User(principal);
-            LoggerFactory.getLogger(LoginController.class).info(gPrincipal.getName());
-        }
-        throw new NotSupportedException("Need to add users to the database and link to an actual profile.");
-        //return "login";
+        oAuth2UserAuthenticationService.createUserAndLinkToOAuth2(principal);
+        return "redirect:/login";
     }
 
     @GetMapping("/createUser")

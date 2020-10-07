@@ -75,12 +75,49 @@ footer {
 }
 
 .centered-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
+
 .center {
-  text-align: center;
-  margin: 0 auto;
+    text-align: center;
+    margin: 0 auto;
+}
+
+ul.no-style {
+    list-style-type: none;
+}
+
+.fas.fa-check {
+    color: green;
+}
+
+.fas.fa-ban, .fas.fa-times {
+    color: red;
+}
+
+.google-button {
+    background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_normal_web@2x.png) no-repeat;
+    background-size: cover;
+
+    &,
+    &:active,
+    &:hover {
+        color: transparent;
+        background-position: center center;
+        background-size: cover;
+        height: 45px;
+    }
+
+    &:hover {
+        background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_focus_web@2x.png) no-repeat;
+        background-size: cover;
+    }
+
+    &:active {
+        background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_pressed_web@2x.png) no-repeat;
+        background-size: cover;
+    }
 }
