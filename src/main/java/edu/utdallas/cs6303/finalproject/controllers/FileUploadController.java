@@ -4,6 +4,7 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -61,7 +62,7 @@ public class FileUploadController {
             storageService.store(file, filename);
             redirectAttributes.addFlashAttribute("message", "You successfully uploaded " + filename + "!");
         }
-        return "redirect:/Images";
+        return HomeController.REDIRECT_TO + "/Images";
     }
 
     @GetMapping("/{fileName:.+}")
@@ -80,7 +81,7 @@ public class FileUploadController {
             return processResponseEntity(file);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
-            System.err.println("fileName = " + fileName + ". Size = " + size);
+            LoggerFactory.getLogger(FileUploadController.class).error("fileName = {}. Size = {}", fileName, size);
             return null;
         } catch (StorageFileNotFoundException e) {
             return serveFile(fileName);

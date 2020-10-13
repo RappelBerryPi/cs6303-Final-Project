@@ -23,6 +23,9 @@
             <label for="exampleInputEmail1" class="floating-label text-secondary">Enter email</label>
             <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
         </div>
+        <div sec:authorize="isAuthenticated()">
+            <div th:text="${#authorization.expression('hasRole(''ADMIN'')')}"></div>
+        </div>
     </div>
 
 </body>

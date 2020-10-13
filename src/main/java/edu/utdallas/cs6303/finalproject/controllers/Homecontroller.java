@@ -17,4 +17,5 @@ public class HomeController {
     }
 
     
+    public static final String REDIRECT_TO = "redirect:";
 }

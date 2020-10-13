@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,6 +29,8 @@ import edu.utdallas.cs6303.finalproject.model.database.repositories.UserReposito
 import edu.utdallas.cs6303.finalproject.services.image.ImageResizerInterface;
 import edu.utdallas.cs6303.finalproject.services.storage.StorageServiceInterface;
 import edu.utdallas.cs6303.finalproject.services.storage.enums.StorageServiceSizeEnum;
+import edu.utdallas.cs6303.finalproject.services.user.UserService;
+import edu.utdallas.cs6303.finalproject.services.user.UserServiceInterface;
 
 @Component
 public class InitialDataLoader implements ApplicationListener<ContextRefreshedEvent> {
@@ -54,6 +57,18 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 
     @Autowired
     MimeTypeRepository mimeTypeRepository;
+
+    @Autowired
+    UserServiceInterface userService;
+
+    @Value("${initialDataLoader.adminUserName}")
+    private String adminUserName;
+
+    @Value("${initialDataLoader.adminUserPassword}")
+    private String adminUserPassword;
+
+    @Value("${initialDataLoader.adminUserEmail}")
+    private String adminUserEmail;
 
     @Override
     @Transactional
@@ -85,16 +100,21 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
     }
 
     private void createUsersAndPrivileges() {
-        Privilege       readPrivilege   = createPrivilegeIfNotFound("READ_PRIVILEGE_BASIC");
-        Privilege       writePrivilege  = createPrivilegeIfNotFound("WRITE_PRIVILEGE_BASIC");
-        List<Privilege> adminPrivileges = Arrays.asList(createPrivilegeIfNotFound("ADMIN_PRIVILEGE"));
-        List<Privilege> userPrivileges  = Arrays.asList(readPrivilege, writePrivilege);
-        createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        createRoleIfNotFound("ROLE_ANONYMOUS", Arrays.asList(readPrivilege));
-        createRoleIfNotFound("ROLE_USER", userPrivileges);
+        List<Privilege> userPrivileges = userService.getBasicUserPrivileges();
+        List<Privilege> employeePrivileges = userService.getBasicEmployeePrivileges();
+        List<Privilege> adminPrivileges = userService.getAdminPrivileges();
 
-        Role adminRole = roleRepository.findByName("ROLE_ADMIN");
-        createUserIfNotFound("", "", "", "", adminRole, "");
+        //TODO: have the admin user consist of the other user's roles..
+        // figure out a way to add roles to the simple granted privileges.
+        // have a role have other roles or assign those roles to something?.....
+        ///TODO:: HMMMMMM
+
+        Role adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
+        createRoleIfNotFound("ROLE_ANONYMOUS", null);
+        createRoleIfNotFound("ROLE_USER", userPrivileges);
+        createRoleIfNotFound("ROLE_EMPLOYEE", employeePrivileges);
+
+        createUserIfNotFound(this.adminUserName, "Admin", "Admin", this.adminUserPassword, adminRole, this.adminUserEmail);
     }
 
     private void createMimeTypeRepository() {

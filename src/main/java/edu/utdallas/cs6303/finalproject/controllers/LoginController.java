@@ -2,13 +2,21 @@ package edu.utdallas.cs6303.finalproject.controllers;
 
 import java.net.MalformedURLException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.transaction.NotSupportedException;
 import javax.validation.Valid;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,10 +27,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import edu.utdallas.cs6303.finalproject.model.database.User;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.UserRepository;
 import edu.utdallas.cs6303.finalproject.model.validation.CreateUserForm;
 import edu.utdallas.cs6303.finalproject.model.validation.ForgotPasswordForm;
 import edu.utdallas.cs6303.finalproject.services.oauth.OAuth2UserAuthenticationService;
+import edu.utdallas.cs6303.finalproject.services.user.UserServiceInterface;
 
 @Controller
 @RequestMapping(LoginController.REQUEST_MAPPING)
@@ -32,7 +42,13 @@ public class LoginController {
     private OAuth2UserAuthenticationService oAuth2UserAuthenticationService;
 
     @Autowired
+    private UserServiceInterface userService;
+
+    @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     public static final String REQUEST_MAPPING = "/login";
 
@@ -58,17 +74,20 @@ public class LoginController {
     }
 
     @PostMapping("/createUser")
-    public String createUserStep2(@Valid CreateUserForm createUserForm, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String createUserStep2(@Valid CreateUserForm createUserForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         //TODO: Finish creating user (and maybe logging them in??)
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult." + CREATE_USER_FORM_ATTRIBUTE_NAME, bindingResult);
             redirectAttributes.addFlashAttribute(CREATE_USER_FORM_ATTRIBUTE_NAME, createUserForm);
-            return "redirect:" + LoginController.REQUEST_MAPPING + "/createUser";
+            return HomeController.REDIRECT_TO + LoginController.REQUEST_MAPPING + "/createUser";
         }
-        LoggerFactory.getLogger(LoginController.class).info(createUserForm.getUserName());
-        LoggerFactory.getLogger(LoginController.class).info(createUserForm.getEmail());
-        LoggerFactory.getLogger(LoginController.class).info(createUserForm.getPassword());
-        LoggerFactory.getLogger(LoginController.class).info(createUserForm.getConfirmationPassword());
+        User user = userService.createUserFromUserForm(createUserForm);
+        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(user.getUserName(), createUserForm.getPassword());
+        Authentication auth = authenticationManager.authenticate(authReq);
+	    SecurityContext securityContext = SecurityContextHolder.getContext();
+	    securityContext.setAuthentication(auth);
+	    HttpSession session = request.getSession(true);
+	    session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
         return "login";
     }
 
@@ -88,11 +107,11 @@ public class LoginController {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult." + FORGOT_PASSWORD_FORM_ATTRIBUTE_NAME, bindingResult);
             redirectAttributes.addFlashAttribute(FORGOT_PASSWORD_FORM_ATTRIBUTE_NAME, forgotPasswordForm);
-            return "redirect:" + LoginController.REQUEST_MAPPING + "/forgotPassword";
+            return HomeController.REDIRECT_TO + LoginController.REQUEST_MAPPING + "/forgotPassword";
         }
         LoggerFactory.getLogger(HomeController.class).info(forgotPasswordForm.getEmailAddress());
         LoggerFactory.getLogger(HomeController.class).info(forgotPasswordForm.getUserName());
-        return "redirect:" + LoginController.REQUEST_MAPPING + "/forgotPassword/2";
+        return HomeController.REDIRECT_TO + LoginController.REQUEST_MAPPING + "/forgotPassword/2";
     }
 
     @PostMapping("/checkEmail")
