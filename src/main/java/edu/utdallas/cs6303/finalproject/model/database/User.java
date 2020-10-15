@@ -1,6 +1,8 @@
 package edu.utdallas.cs6303.finalproject.model.database;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,47 +13,44 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 @Entity
-public class User {
+public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    private String userName;
-    private String firstName;
-    private String middleName;
-    private String lastName;
-    private String email;
-    private String password;
+    private String  userName;
+    private String  firstName;
+    private String  middleName;
+    private String  lastName;
+    private String  email;
+    private String  password;
     private boolean active;
     private boolean locked;
 
     @OneToOne
-    private GithubOAuth2User githubOAuth2User;
+    private GithubOidcUser githubOidcUser;
     @OneToOne
-    private GoogleOAuth2User googleOAuth2User;
+    private GoogleOidcUser googleOidcUser;
 
     @ManyToMany
-    @JoinTable(
-        name = "UsersRoles",
-        joinColumns = @JoinColumn(
-            name = "UserID", referencedColumnName = "id"
-        ), inverseJoinColumns = @JoinColumn(
-            name = "RoleID", referencedColumnName = "id"
-        )
-    )
+    @JoinTable(name = "UsersRoles", joinColumns = @JoinColumn(name = "UserID", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "RoleID", referencedColumnName = "id"))
     private Collection<Role> roles;
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getUserName() {
         return this.userName;
@@ -78,7 +77,7 @@ public class User {
     }
 
     public void setFirstName(String firstName) {
-       this.firstName = firstName;
+        this.firstName = firstName;
     }
 
     public String getMiddleName() {
@@ -86,7 +85,7 @@ public class User {
     }
 
     public void setMiddleName(String middleName) {
-       this.middleName = middleName;
+        this.middleName = middleName;
     }
 
     public String getLastName() {
@@ -140,6 +139,7 @@ public class User {
     public boolean isLocked() {
         return this.locked;
     }
+
     public boolean isNotLocked() {
         return !this.locked;
     }
@@ -152,24 +152,63 @@ public class User {
         this.locked = false;
     }
 
-    public static final String USER_NAME_REGEX_LOOSE = "^[A-Za-z0-9_]+$";
-    public static final String USER_NAME_NOT_MATCH_MESSAGE = "Please enter a valid Username.";
-    public static final String USER_NAME_REGEX_TIGHT = "^[A-Za-z][A-Za-z0-9_]{7,59}$";
-    public static final String USER_NAME_REGEX_TIGHT_HTML_PATTERN = USER_NAME_REGEX_TIGHT.substring(1,USER_NAME_REGEX_TIGHT.length() - 1);
+    public static final String USER_NAME_REGEX_LOOSE              = "^[A-Za-z0-9_]+$";
+    public static final String USER_NAME_NOT_MATCH_MESSAGE        = "Please enter a valid Username.";
+    public static final String USER_NAME_REGEX_TIGHT              = "^[A-Za-z][A-Za-z0-9_]{7,59}$";
+    public static final String USER_NAME_REGEX_TIGHT_HTML_PATTERN = USER_NAME_REGEX_TIGHT.substring(1, USER_NAME_REGEX_TIGHT.length() - 1);
 
-    public GithubOAuth2User getGithubOAuth2User() {
-        return githubOAuth2User;
+    public GithubOidcUser getGithubOidcUser() {
+        return githubOidcUser;
     }
 
-    public void setGithubOAuth2User(GithubOAuth2User githubOAuth2User) {
-        this.githubOAuth2User = githubOAuth2User;
+    public void setGithubOidcUser(GithubOidcUser githubOidcUser) {
+        this.githubOidcUser = githubOidcUser;
     }
 
-    public GoogleOAuth2User getGoogleOAuth2User() {
-        return googleOAuth2User;
+    public GoogleOidcUser getGoogleOidcUser() {
+        return googleOidcUser;
     }
 
-    public void setGoogleOAuth2User(GoogleOAuth2User googleOAuth2User) {
-        this.googleOAuth2User = googleOAuth2User;
+    public void setGoogleOidcUser(GoogleOidcUser googleOidcUser) {
+        this.googleOidcUser = googleOidcUser;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> returnList = this 
+                .getRoles()
+                .stream()
+                .map(Role::getPrivileges)
+                .flatMap(Collection::stream)
+                .map(p -> new SimpleGrantedAuthority(p.getName()))
+                .collect(Collectors.toList());
+        returnList
+            .addAll(this
+                    .getRoles()
+                    .stream()
+                    .map(r -> new SimpleGrantedAuthority(r.getName()))
+                    .collect(Collectors.toList())
+                   );
+        return returnList;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.getUserName();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.isActive();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.isNotLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.isAccountNonExpired();
     }
 }

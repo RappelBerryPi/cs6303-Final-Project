@@ -1,6 +1,7 @@
 package edu.utdallas.cs6303.finalproject.controllers;
 
 import java.net.MalformedURLException;
+import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -12,9 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
@@ -31,7 +35,7 @@ import edu.utdallas.cs6303.finalproject.model.database.User;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.UserRepository;
 import edu.utdallas.cs6303.finalproject.model.validation.CreateUserForm;
 import edu.utdallas.cs6303.finalproject.model.validation.ForgotPasswordForm;
-import edu.utdallas.cs6303.finalproject.services.oauth.OAuth2UserAuthenticationService;
+import edu.utdallas.cs6303.finalproject.services.oauth.OidcUserAuthenticationService;
 import edu.utdallas.cs6303.finalproject.services.user.UserServiceInterface;
 
 @Controller
@@ -39,7 +43,7 @@ import edu.utdallas.cs6303.finalproject.services.user.UserServiceInterface;
 public class LoginController {
 
     @Autowired
-    private OAuth2UserAuthenticationService oAuth2UserAuthenticationService;
+    private OidcUserAuthenticationService oidcUserAuthenticationService;
 
     @Autowired
     private UserServiceInterface userService;
@@ -58,8 +62,8 @@ public class LoginController {
     }
 
     @GetMapping("/loginSuccess")
-    public String getLoginInfo(@AuthenticationPrincipal OAuth2User principal) throws NotSupportedException, MalformedURLException {
-        oAuth2UserAuthenticationService.createUserAndLinkToOAuth2(principal);
+    public String getLoginInfo(@AuthenticationPrincipal OidcUser principal) throws NotSupportedException, MalformedURLException {
+        oidcUserAuthenticationService.createUserAndLinkToOidc(principal);
         return "redirect:/login";
     }
 

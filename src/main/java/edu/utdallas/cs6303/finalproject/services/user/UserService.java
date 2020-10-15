@@ -88,8 +88,21 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public Collection<GrantedAuthority> getAuthorities(User user) {
-        // TODO: throwing error
-        return user.getRoles().stream().map(Role::getPrivileges).flatMap(Collection::stream).map(p -> new SimpleGrantedAuthority(p.getName())).collect(Collectors.toList());
+        List<GrantedAuthority> returnList = user
+                .getRoles()
+                .stream()
+                .map(Role::getPrivileges)
+                .flatMap(Collection::stream)
+                .map(p -> new SimpleGrantedAuthority(p.getName()))
+                .collect(Collectors.toList());
+        returnList
+            .addAll(user
+                    .getRoles()
+                    .stream()
+                    .map(r -> new SimpleGrantedAuthority(r.getName()))
+                    .collect(Collectors.toList())
+                   );
+        return returnList;
     }
 
     @Override
@@ -114,7 +127,6 @@ public class UserService implements UserServiceInterface {
             basicUserPrivileges.add(createPrivilegeIfNotFound("READ_STORE_ITEMS_PRIVILEGE"));
             basicUserPrivileges.add(createPrivilegeIfNotFound("READ_ALL_PROFILE_PICTURES_PRIVILEGE"));
             basicUserPrivileges.add(createPrivilegeIfNotFound("WRITE_OWN_PROFILE_PICTURE_PRIVILEGE"));
-            basicUserPrivileges.add(createPrivilegeIfNotFound("WRITE_ALL_STORE_ITEM_PICTURES_PRIVILEGE"));
         }
         return basicUserPrivileges;
     }
@@ -124,7 +136,7 @@ public class UserService implements UserServiceInterface {
     @Override
     public List<Privilege> getBasicEmployeePrivileges() {
         if (basicEmployeePrivileges == null) {
-            basicEmployeePrivileges = getBasicUserPrivileges();
+            basicEmployeePrivileges = new ArrayList<>();
             basicEmployeePrivileges.add(createPrivilegeIfNotFound("WRITE_STORE_ITEMS_PRIVILEGE"));
             basicEmployeePrivileges.add(createPrivilegeIfNotFound("READ_ALL_ORDERS_PRIVILEGE"));
             basicEmployeePrivileges.add(createPrivilegeIfNotFound("WRITE_ALL_ORDERS_PRIVILEGE"));
@@ -140,7 +152,7 @@ public class UserService implements UserServiceInterface {
     @Override
     public List<Privilege> getAdminPrivileges() {
         if (adminPrivileges == null) {
-            adminPrivileges = getBasicEmployeePrivileges();
+            adminPrivileges = new ArrayList<>();
             adminPrivileges.add(createPrivilegeIfNotFound("ADMIN_PRIVILEGE"));
         }
         return adminPrivileges;

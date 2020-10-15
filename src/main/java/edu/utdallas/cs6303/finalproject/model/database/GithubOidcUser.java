@@ -3,7 +3,7 @@ package edu.utdallas.cs6303.finalproject.model.database;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,10 +16,13 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @Entity
-public class GithubOAuth2User implements OAuth2User {
+public class GithubOidcUser implements OidcUser {
 
     @Id
     private long id;
@@ -72,8 +75,14 @@ public class GithubOAuth2User implements OAuth2User {
     // TODO: determine if necessary??
     @Transient
     private Map<String, Object> plan;
+    @Transient
+    private Map<String, Object> claims;
+    @Transient
+    public OidcUserInfo         userInfo;
+    @Transient
+    public OidcIdToken          idToken;
 
-    public GithubOAuth2User() {
+    public GithubOidcUser() {
         this.attributes  = new HashMap<>();
         this.authorities = new ArrayList<>();
         this.name        = "";
@@ -87,24 +96,24 @@ public class GithubOAuth2User implements OAuth2User {
         this.githubId = githubID;
     }
 
-    private static Object tryGetAttributeValue(OAuth2User oAuth2User, String attributeName) {
+    private static Object tryGetAttributeValue(OidcUser oidcUser, String attributeName) {
         try {
-            return oAuth2User.getAttribute(attributeName);
+            return oidcUser.getAttribute(attributeName);
         } catch (Exception e) {
             return null;
         }
     }
 
-    private static String tryGetStringAttributeValue(OAuth2User oAuth2User, String attributeName) {
-        return (String) tryGetAttributeValue(oAuth2User, attributeName);
+    private static String tryGetStringAttributeValue(OidcUser oidcUser, String attributeName) {
+        return (String) tryGetAttributeValue(oidcUser, attributeName);
     }
 
-    private static int tryGetIntAttributeValue(OAuth2User oAuth2User, String attributeName) {
-        return (int) tryGetAttributeValue(oAuth2User, attributeName);
+    private static int tryGetIntAttributeValue(OidcUser oidcUser, String attributeName) {
+        return (int) tryGetAttributeValue(oidcUser, attributeName);
     }
 
-    private static boolean tryGetBooleanAttributeValue(OAuth2User oAuth2User, String attributeName) {
-        Object val = tryGetAttributeValue(oAuth2User, attributeName);
+    private static boolean tryGetBooleanAttributeValue(OidcUser oidcUser, String attributeName) {
+        Object val = tryGetAttributeValue(oidcUser, attributeName);
         if (val == null) {
             return false;
         } else {
@@ -113,8 +122,8 @@ public class GithubOAuth2User implements OAuth2User {
     }
 
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> tryGetStringObjectMapAttributeValue(OAuth2User oAuth2User, String attributeName) {
-        Object val = tryGetAttributeValue(oAuth2User, attributeName);
+    private static Map<String, Object> tryGetStringObjectMapAttributeValue(OidcUser oidcUser, String attributeName) {
+        Object val = tryGetAttributeValue(oidcUser, attributeName);
         if (val == null) {
             return null;
         } else {
@@ -126,48 +135,56 @@ public class GithubOAuth2User implements OAuth2User {
         }
     }
 
-    public GithubOAuth2User(OAuth2User oAuth2User) {
-        this.attributes              = oAuth2User.getAttributes();
-        this.authorities             = oAuth2User.getAuthorities();
-        this.name                    = tryGetStringAttributeValue(oAuth2User, "name");
-        this.login                   = tryGetStringAttributeValue(oAuth2User, "login");
-        this.githubId                = tryGetIntAttributeValue(oAuth2User, "id");
-        this.nodeId                  = tryGetStringAttributeValue(oAuth2User, "node_id");
-        this.avatarUrl               = tryGetStringAttributeValue(oAuth2User, "avatar_url");
-        this.gravatarId              = tryGetStringAttributeValue(oAuth2User, "gravatar_id");
-        this.url                     = tryGetStringAttributeValue(oAuth2User, "url");
-        this.htmlUrl                 = tryGetStringAttributeValue(oAuth2User, "html_url");
-        this.followersUrl            = tryGetStringAttributeValue(oAuth2User, "followers_url");
-        this.followingUrl            = tryGetStringAttributeValue(oAuth2User, "following_url");
-        this.gistsUrl                = tryGetStringAttributeValue(oAuth2User, "gists_url");
-        this.starredUrl              = tryGetStringAttributeValue(oAuth2User, "starred_url");
-        this.subscriptionsUrl        = tryGetStringAttributeValue(oAuth2User, "subscriptions_url");
-        this.organizationsUrl        = tryGetStringAttributeValue(oAuth2User, "organizations_url");
-        this.reposUrl                = tryGetStringAttributeValue(oAuth2User, "repos_url");
-        this.eventsUrl               = tryGetStringAttributeValue(oAuth2User, "events_url");
-        this.receivedEventsUrl       = tryGetStringAttributeValue(oAuth2User, "received_events_url");
-        this.type                    = tryGetStringAttributeValue(oAuth2User, "type");
-        this.siteAdmin               = tryGetBooleanAttributeValue(oAuth2User, "site_admin");
-        this.company                 = tryGetStringAttributeValue(oAuth2User, "company");
-        this.blog                    = tryGetStringAttributeValue(oAuth2User, "blog");
-        this.location                = tryGetStringAttributeValue(oAuth2User, "location");
-        this.email                   = tryGetStringAttributeValue(oAuth2User, "email");
-        this.hireable                = tryGetBooleanAttributeValue(oAuth2User, "hireable");
-        this.bio                     = tryGetStringAttributeValue(oAuth2User, "bio");
-        this.twitterUsername         = tryGetStringAttributeValue(oAuth2User, "twitter_username");
-        this.publicRepos             = tryGetIntAttributeValue(oAuth2User, "public_repos");
-        this.publicGists             = tryGetIntAttributeValue(oAuth2User, "public_gists");
-        this.followers               = tryGetIntAttributeValue(oAuth2User, "followers");
-        this.following               = tryGetIntAttributeValue(oAuth2User, "following");
-        this.createdAt               = LocalDateTime.ofInstant(Instant.parse(tryGetStringAttributeValue(oAuth2User, "created_at")), ZoneId.systemDefault());
-        this.updatedAt               = LocalDateTime.ofInstant(Instant.parse(tryGetStringAttributeValue(oAuth2User, "updated_at")), ZoneId.systemDefault());
-        this.privateGists            = tryGetIntAttributeValue(oAuth2User, "private_gists");
-        this.totalPrivateRepos       = tryGetIntAttributeValue(oAuth2User, "total_private_repos");
-        this.ownedPrivateRepos       = tryGetIntAttributeValue(oAuth2User, "owned_private_repos");
-        this.diskUsage               = tryGetIntAttributeValue(oAuth2User, "disk_usage");
-        this.collaborators           = tryGetIntAttributeValue(oAuth2User, "collaborators");
-        this.twoFactorAuthentication = tryGetBooleanAttributeValue(oAuth2User, "two_factor_authentication");
-        this.plan                    = tryGetStringObjectMapAttributeValue(oAuth2User, "plan");
+    public GithubOidcUser(OidcUser oidcUser) {
+        this.attributes              = oidcUser.getAttributes();
+        this.authorities             = oidcUser.getAuthorities();
+        this.name                    = tryGetStringAttributeValue(oidcUser, "name");
+        this.login                   = tryGetStringAttributeValue(oidcUser, "login");
+        this.githubId                = tryGetIntAttributeValue(oidcUser, "id");
+        this.nodeId                  = tryGetStringAttributeValue(oidcUser, "node_id");
+        this.avatarUrl               = tryGetStringAttributeValue(oidcUser, "avatar_url");
+        this.gravatarId              = tryGetStringAttributeValue(oidcUser, "gravatar_id");
+        this.url                     = tryGetStringAttributeValue(oidcUser, "url");
+        this.htmlUrl                 = tryGetStringAttributeValue(oidcUser, "html_url");
+        this.followersUrl            = tryGetStringAttributeValue(oidcUser, "followers_url");
+        this.followingUrl            = tryGetStringAttributeValue(oidcUser, "following_url");
+        this.gistsUrl                = tryGetStringAttributeValue(oidcUser, "gists_url");
+        this.starredUrl              = tryGetStringAttributeValue(oidcUser, "starred_url");
+        this.subscriptionsUrl        = tryGetStringAttributeValue(oidcUser, "subscriptions_url");
+        this.organizationsUrl        = tryGetStringAttributeValue(oidcUser, "organizations_url");
+        this.reposUrl                = tryGetStringAttributeValue(oidcUser, "repos_url");
+        this.eventsUrl               = tryGetStringAttributeValue(oidcUser, "events_url");
+        this.receivedEventsUrl       = tryGetStringAttributeValue(oidcUser, "received_events_url");
+        this.type                    = tryGetStringAttributeValue(oidcUser, "type");
+        this.siteAdmin               = tryGetBooleanAttributeValue(oidcUser, "site_admin");
+        this.company                 = tryGetStringAttributeValue(oidcUser, "company");
+        this.blog                    = tryGetStringAttributeValue(oidcUser, "blog");
+        this.location                = tryGetStringAttributeValue(oidcUser, "location");
+        this.email                   = tryGetStringAttributeValue(oidcUser, "email");
+        this.hireable                = tryGetBooleanAttributeValue(oidcUser, "hireable");
+        this.bio                     = tryGetStringAttributeValue(oidcUser, "bio");
+        this.twitterUsername         = tryGetStringAttributeValue(oidcUser, "twitter_username");
+        this.publicRepos             = tryGetIntAttributeValue(oidcUser, "public_repos");
+        this.publicGists             = tryGetIntAttributeValue(oidcUser, "public_gists");
+        this.followers               = tryGetIntAttributeValue(oidcUser, "followers");
+        this.following               = tryGetIntAttributeValue(oidcUser, "following");
+        this.createdAt               = LocalDateTime.ofInstant(Instant.parse(tryGetStringAttributeValue(oidcUser, "created_at")), ZoneId.systemDefault());
+        this.updatedAt               = LocalDateTime.ofInstant(Instant.parse(tryGetStringAttributeValue(oidcUser, "updated_at")), ZoneId.systemDefault());
+        this.privateGists            = tryGetIntAttributeValue(oidcUser, "private_gists");
+        this.totalPrivateRepos       = tryGetIntAttributeValue(oidcUser, "total_private_repos");
+        this.ownedPrivateRepos       = tryGetIntAttributeValue(oidcUser, "owned_private_repos");
+        this.diskUsage               = tryGetIntAttributeValue(oidcUser, "disk_usage");
+        this.collaborators           = tryGetIntAttributeValue(oidcUser, "collaborators");
+        this.twoFactorAuthentication = tryGetBooleanAttributeValue(oidcUser, "two_factor_authentication");
+        this.plan                    = tryGetStringObjectMapAttributeValue(oidcUser, "plan");
+        this.claims                  = oidcUser.getClaims();
+        this.userInfo                = oidcUser.getUserInfo();
+        this.idToken                 = oidcUser.getIdToken();
+    }
+
+    public GithubOidcUser(OidcUser oidcUser, User user) {
+        this(oidcUser);
+        this.authorities = user.getAuthorities();
     }
 
     public Map<String, Object> getAttributes() {
@@ -350,6 +367,7 @@ public class GithubOAuth2User implements OAuth2User {
         this.location = location;
     }
 
+    @Override
     public String getEmail() {
         return email;
     }
@@ -422,8 +440,9 @@ public class GithubOAuth2User implements OAuth2User {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    @Override
+    public Instant getUpdatedAt() {
+        return updatedAt.toInstant(ZoneOffset.UTC);
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
@@ -488,6 +507,21 @@ public class GithubOAuth2User implements OAuth2User {
 
     public static long getGithubId(OAuth2User principal) {
         return ((Number) principal.getAttribute("id")).longValue();
+    }
+
+    @Override
+    public Map<String, Object> getClaims() {
+        return claims;
+    }
+
+    @Override
+    public OidcUserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    @Override
+    public OidcIdToken getIdToken() {
+        return idToken;
     }
 
 }

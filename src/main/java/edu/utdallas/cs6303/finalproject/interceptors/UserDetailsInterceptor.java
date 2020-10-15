@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import edu.utdallas.cs6303.finalproject.model.database.User;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.UserRepository;
-import edu.utdallas.cs6303.finalproject.services.oauth.OAuth2UserAuthenticationService;
+import edu.utdallas.cs6303.finalproject.services.oauth.OidcUserAuthenticationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -23,7 +23,7 @@ public class UserDetailsInterceptor extends HandlerInterceptorAdapter {
     UserRepository userRepository;
 
     @Autowired
-    OAuth2UserAuthenticationService oAuth2UserAuthenticationService;
+    OidcUserAuthenticationService oAuth2UserAuthenticationService;
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {

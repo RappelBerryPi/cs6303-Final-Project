@@ -1,7 +1,6 @@
 package edu.utdallas.cs6303.finalproject.model.database;
 
 import java.net.URL;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -16,10 +15,13 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @Entity
-public class GoogleOAuth2User implements OAuth2User {
+public class GoogleOidcUser implements OidcUser {
 
     @Id
     private long                id;
@@ -37,41 +39,55 @@ public class GoogleOAuth2User implements OAuth2User {
     private String profilePicture;
     // TODO: fix
     @Transient
-    private List<String>  serverClientId;          // aud
-    private String        clientID;                // azp
-    private LocalDateTime assertionCreationTime;   // iat
-    private LocalDateTime assertionExpirationTime; // exp
-    private String        familyName;
-    private String        email;
+    private List<String>        serverClientId;          // aud
+    private String              clientID;                // azp
+    private LocalDateTime       assertionCreationTime;   // iat
+    private LocalDateTime       assertionExpirationTime; // exp
+    private String              familyName;
+    private String              email;
+    @Transient
+    private Map<String, Object> claims;
+    @Transient
+    public OidcUserInfo         userInfo;
+    @Transient
+    public OidcIdToken          idToken;
 
     @Column(unique = true, length = 255)
     private String googleId; // sub
 
-    public GoogleOAuth2User() {
+    public GoogleOidcUser() {
         this.attributes  = new HashMap<>();
         this.authorities = new ArrayList<>();
         this.name        = "";
     }
 
-    public GoogleOAuth2User(OAuth2User oAuth2User) {
-        this.attributes              = oAuth2User.getAttributes();
-        this.authorities             = oAuth2User.getAuthorities();
-        this.name                    = oAuth2User.getAttribute("name");
-        this.assertionIssuer         = oAuth2User.getAttribute("iss");
-        this.givenName               = oAuth2User.getAttribute("givenName");
-        this.locale                  = oAuth2User.getAttribute("nonce");
-        this.profilePicture          = oAuth2User.getAttribute("profilePicture");
-        this.serverClientId          = oAuth2User.getAttribute("aud");
-        this.clientID                = oAuth2User.getAttribute("azp");
-        this.assertionCreationTime   = LocalDateTime.ofInstant(oAuth2User.getAttribute("iat"), ZoneId.systemDefault());
-        this.assertionExpirationTime = LocalDateTime.ofInstant(oAuth2User.getAttribute("exp"), ZoneId.systemDefault());
-        this.email                   = oAuth2User.getAttribute("email");
-        this.googleId                = oAuth2User.getAttribute("sub");
+    public GoogleOidcUser(OidcUser oidcUser) {
+        this.attributes              = oidcUser.getAttributes();
+        this.authorities             = oidcUser.getAuthorities();
+        this.name                    = oidcUser.getAttribute("name");
+        this.assertionIssuer         = oidcUser.getAttribute("iss");
+        this.givenName               = oidcUser.getAttribute("givenName");
+        this.locale                  = oidcUser.getAttribute("nonce");
+        this.profilePicture          = oidcUser.getAttribute("profilePicture");
+        this.serverClientId          = oidcUser.getAttribute("aud");
+        this.clientID                = oidcUser.getAttribute("azp");
+        this.assertionCreationTime   = LocalDateTime.ofInstant(oidcUser.getAttribute("iat"), ZoneId.systemDefault());
+        this.assertionExpirationTime = LocalDateTime.ofInstant(oidcUser.getAttribute("exp"), ZoneId.systemDefault());
+        this.email                   = oidcUser.getAttribute("email");
+        this.googleId                = oidcUser.getAttribute("sub");
+        this.claims                  = oidcUser.getClaims();
+        this.userInfo                = oidcUser.getUserInfo();
+        this.idToken                 = oidcUser.getIdToken();
         if (this.givenName == null || this.familyName == null) {
             String[] nameSplit = this.name.split("\\s+");
-            this.givenName = nameSplit[0];
+            this.givenName  = nameSplit[0];
             this.familyName = nameSplit[nameSplit.length - 1];
         }
+    }
+
+    public GoogleOidcUser(OidcUser oidcUser, User user) {
+        this(oidcUser);
+        this.authorities = user.getAuthorities();
     }
 
     public long getId() {
@@ -93,6 +109,7 @@ public class GoogleOAuth2User implements OAuth2User {
         return this.name;
     }
 
+    @Override
     public String getLocale() {
         return locale;
     }
@@ -101,6 +118,7 @@ public class GoogleOAuth2User implements OAuth2User {
         this.locale = locale;
     }
 
+    @Override
     public String getNonce() {
         return nonce;
     }
@@ -133,6 +151,7 @@ public class GoogleOAuth2User implements OAuth2User {
         this.clientID = clientID;
     }
 
+    @Override
     public String getEmail() {
         return email;
     }
@@ -149,6 +168,7 @@ public class GoogleOAuth2User implements OAuth2User {
         this.assertionIssuer = assertionIssuer;
     }
 
+    @Override
     public String getGivenName() {
         return givenName;
     }
@@ -173,6 +193,7 @@ public class GoogleOAuth2User implements OAuth2User {
         this.assertionExpirationTime = assertionExpirationTime;
     }
 
+    @Override
     public String getFamilyName() {
         return familyName;
     }
@@ -191,5 +212,20 @@ public class GoogleOAuth2User implements OAuth2User {
 
     public static String getGoogleId(OAuth2User principal) {
         return principal.getAttribute("sub");
+    }
+
+    @Override
+    public Map<String, Object> getClaims() {
+        return claims;
+    }
+
+    @Override
+    public OidcUserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    @Override
+    public OidcIdToken getIdToken() {
+        return idToken;
     }
 }

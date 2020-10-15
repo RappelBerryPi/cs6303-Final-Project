@@ -24,7 +24,7 @@
             <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
         </div>
         <div sec:authorize="isAuthenticated()">
-            <div th:text="${#authorization.expression('hasRole(''ADMIN'')')}"></div>
+            <div th:text="${#authentication.authorities}"></div>
         </div>
     </div>
 

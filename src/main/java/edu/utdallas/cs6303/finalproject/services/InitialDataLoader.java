@@ -1,7 +1,6 @@
 package edu.utdallas.cs6303.finalproject.services;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
@@ -22,14 +21,12 @@ import edu.utdallas.cs6303.finalproject.model.database.Role;
 import edu.utdallas.cs6303.finalproject.model.database.UploadedFile;
 import edu.utdallas.cs6303.finalproject.model.database.User;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.MimeTypeRepository;
-import edu.utdallas.cs6303.finalproject.model.database.repositories.PrivilegeRepository;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.RoleRepository;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.UploadedFileRepository;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.UserRepository;
 import edu.utdallas.cs6303.finalproject.services.image.ImageResizerInterface;
 import edu.utdallas.cs6303.finalproject.services.storage.StorageServiceInterface;
 import edu.utdallas.cs6303.finalproject.services.storage.enums.StorageServiceSizeEnum;
-import edu.utdallas.cs6303.finalproject.services.user.UserService;
 import edu.utdallas.cs6303.finalproject.services.user.UserServiceInterface;
 
 @Component
@@ -42,9 +39,6 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 
     @Autowired
     private RoleRepository roleRepository;
-
-    @Autowired
-    private PrivilegeRepository privilegeRepository;
 
     @Autowired
     private StorageServiceInterface storageService;
@@ -104,17 +98,17 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
         List<Privilege> employeePrivileges = userService.getBasicEmployeePrivileges();
         List<Privilege> adminPrivileges = userService.getAdminPrivileges();
 
-        //TODO: have the admin user consist of the other user's roles..
-        // figure out a way to add roles to the simple granted privileges.
-        // have a role have other roles or assign those roles to something?.....
-        ///TODO:: HMMMMMM
-
         Role adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
+        Role userRole = createRoleIfNotFound("ROLE_USER", userPrivileges);
+        Role employeeRole = createRoleIfNotFound("ROLE_EMPLOYEE", employeePrivileges);
         createRoleIfNotFound("ROLE_ANONYMOUS", null);
-        createRoleIfNotFound("ROLE_USER", userPrivileges);
-        createRoleIfNotFound("ROLE_EMPLOYEE", employeePrivileges);
 
-        createUserIfNotFound(this.adminUserName, "Admin", "Admin", this.adminUserPassword, adminRole, this.adminUserEmail);
+        List<Role> roles = new ArrayList<>();
+        roles.add(userRole);
+        roles.add(employeeRole);
+        roles.add(adminRole);
+
+        createUserIfNotFound(this.adminUserName, "Admin", "Admin", this.adminUserPassword, roles, this.adminUserEmail);
     }
 
     private void createMimeTypeRepository() {
@@ -427,16 +421,6 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
         });
     }
 
-    private Privilege createPrivilegeIfNotFound(String name) {
-        Privilege privilege = privilegeRepository.findByName(name);
-        if (privilege == null) {
-            privilege = new Privilege();
-            privilege.setName(name);
-            privilegeRepository.save(privilege);
-        }
-        return privilege;
-    }
-
     private Role createRoleIfNotFound(String name, Collection<Privilege> privileges) {
         Role role = roleRepository.findByName(name);
         if (role == null) {
@@ -448,7 +432,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
         return role;
     }
 
-    private void createUserIfNotFound(String userName, String firstName, String lastName, String password, Role adminRole, String email) {
+    private void createUserIfNotFound(String userName, String firstName, String lastName, String password, Collection<Role> roles, String email) {
         User user = userRepository.findByUserName(userName);
         if (user == null) {
             user = new User();
@@ -458,7 +442,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
             PasswordEncoder encoder = new BCryptPasswordEncoder();
             user.setPassword(encoder.encode(password));
             user.setEmail(email);
-            user.setRoles(Arrays.asList(adminRole));
+            user.setRoles(roles);
             user.setActive();
             user.unlockAccount();
             userRepository.save(user);

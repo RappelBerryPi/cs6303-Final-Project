@@ -6,9 +6,9 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import edu.utdallas.cs6303.finalproject.model.database.User;
@@ -21,12 +21,13 @@ public class SimpleAuthenticationManager implements AuthenticationManager {
 
     @Override
     @Transactional
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) {
         Optional<User> userOptional = userService.findByUserName((String) authentication.getPrincipal());
         if (userOptional.isPresent() && userService.isPasswordValid(userOptional.get(), (String) authentication.getCredentials())) {
             return new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), userService.getAuthorities(userOptional.get()));
+        } else {
+            throw new BadCredentialsException("bad username or password");
         }
-        return new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials());
     }
     
 }
