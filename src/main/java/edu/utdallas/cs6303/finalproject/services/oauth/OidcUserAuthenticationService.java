@@ -65,7 +65,7 @@ public class OidcUserAuthenticationService {
         if (user == null) {
             user = new User();
             user.setEmail(gPrincipal.getEmail());
-            user.setUserName(gPrincipal.getEmail());
+            user.setUsername(gPrincipal.getEmail());
             int length = new Random().nextInt(100);
             user.setPassword(passwordEncoder.encode(RandomString.make(length)));
             user.Enable();
@@ -91,7 +91,7 @@ public class OidcUserAuthenticationService {
         if (user == null) {
             user = new User();
             user.setEmail(gPrincipal.getEmail());
-            user.setUserName(String.valueOf(gPrincipal.getGithubID()));
+            user.setUsername(String.valueOf(gPrincipal.getGithubID()));
             user.setPassword(RandomString.make());
             user.Enable();
             String[] nameSplit = gPrincipal.getName().split("\\s+");

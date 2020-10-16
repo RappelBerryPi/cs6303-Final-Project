@@ -37,7 +37,7 @@ public class UserDetailsInterceptor extends HandlerInterceptorAdapter {
                 } else {
                     String userName = contextImpl.getAuthentication().getName();
                     if (userName != null) {
-                        user = userRepository.findByUserName(userName);
+                        user = userRepository.findByUsername(userName);
                     }
                 }
             } catch (Exception e) {

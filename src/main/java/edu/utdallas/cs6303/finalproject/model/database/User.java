@@ -22,7 +22,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    private String  userName;
+    private String  username;
     private String  firstName;
     private String  middleName;
     private String  lastName;
@@ -33,8 +33,12 @@ public class User implements UserDetails {
 
     @OneToOne
     private GithubOidcUser githubOidcUser;
+
     @OneToOne
     private GoogleOidcUser googleOidcUser;
+
+    @OneToOne(mappedBy = "user")
+    private Cart cart;
 
     @ManyToMany
     @JoinTable(name = "UsersRoles", joinColumns = @JoinColumn(name = "UserID", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "RoleID", referencedColumnName = "id"))
@@ -52,12 +56,13 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public String getUserName() {
-        return this.userName;
+    @Override
+    public String getUsername() {
+        return this.username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getFullName() {
@@ -175,26 +180,10 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> returnList = this 
-                .getRoles()
-                .stream()
-                .map(Role::getPrivileges)
-                .flatMap(Collection::stream)
-                .map(p -> new SimpleGrantedAuthority(p.getName()))
-                .collect(Collectors.toList());
-        returnList
-            .addAll(this
-                    .getRoles()
-                    .stream()
-                    .map(r -> new SimpleGrantedAuthority(r.getName()))
-                    .collect(Collectors.toList())
-                   );
+        List<GrantedAuthority> returnList =
+                this.getRoles().stream().map(Role::getPrivileges).flatMap(Collection::stream).map(p -> new SimpleGrantedAuthority(p.getName())).collect(Collectors.toList());
+        returnList.addAll(this.getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList()));
         return returnList;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.getUserName();
     }
 
     @Override
@@ -210,5 +199,13 @@ public class User implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() {
         return this.isAccountNonExpired();
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 }

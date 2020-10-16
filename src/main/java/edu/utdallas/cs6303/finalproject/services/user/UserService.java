@@ -52,7 +52,7 @@ public class UserService implements UserServiceInterface {
         User user = new User();
         user.setFirstName(createUserForm.getFirstName());
         user.setLastName(createUserForm.getLastName());
-        user.setUserName(createUserForm.getUserName());
+        user.setUsername(createUserForm.getUserName());
         user.setPassword(passwordEncoder.encode(createUserForm.getPassword()));
         user.setEmail(createUserForm.getEmail());
         user.Enable();
@@ -70,13 +70,13 @@ public class UserService implements UserServiceInterface {
         createUserForm.setFirstName(user.getFirstName());
         createUserForm.setLastName(user.getLastName());
         createUserForm.setEmail(user.getEmail());
-        createUserForm.setUserName(user.getUserName());
+        createUserForm.setUserName(user.getUsername());
         return createUserForm;
     }
 
     @Override
     public void addAuthenticationTokenToSession(HttpServletRequest request, User user, String password) {
-        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(user.getUserName(), password);
+        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(user.getUsername(), password);
         Authentication                      auth    = authManager.authenticate(authReq);
         auth.setAuthenticated(true);
 
@@ -107,7 +107,7 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public Optional<User> findByUserName(String userName) {
-        User user = userRepository.findByUserName(userName);
+        User user = userRepository.findByUsername(userName);
         return Optional.of(user);
     }
 

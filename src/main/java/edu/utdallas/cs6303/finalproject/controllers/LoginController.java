@@ -86,7 +86,7 @@ public class LoginController {
             return HomeController.REDIRECT_TO + LoginController.REQUEST_MAPPING + "/createUser";
         }
         User user = userService.createUserFromUserForm(createUserForm);
-        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(user.getUserName(), createUserForm.getPassword());
+        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(user.getUsername(), createUserForm.getPassword());
         Authentication auth = authenticationManager.authenticate(authReq);
 	    SecurityContext securityContext = SecurityContextHolder.getContext();
 	    securityContext.setAuthentication(auth);
@@ -125,7 +125,7 @@ public class LoginController {
 
     @PostMapping("/checkUserName")
     public @ResponseBody boolean checkUserName(@RequestParam("userName") String userName) {
-        return userName != null && userRepository.findByUserName(userName) == null;
+        return userName != null && userRepository.findByUsername(userName) == null;
     }
 
 }

@@ -64,6 +64,10 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
     @Value("${initialDataLoader.adminUserEmail}")
     private String adminUserEmail;
 
+    // we're assuming that this is being run in a local origin based sales tax state (such as texas) and so the sales
+    // tax will be the same no matter the destination. We are also assuming that shipping is only happening in the same
+    // or nearby zip codes and as such there is no need for several zip codes.
+
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -433,11 +437,11 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
     }
 
     private void createUserIfNotFound(String userName, String firstName, String lastName, String password, Collection<Role> roles, String email) {
-        User user = userRepository.findByUserName(userName);
+        User user = userRepository.findByUsername(userName);
         if (user == null) {
             user = new User();
             user.setFirstName(firstName);
-            user.setUserName(userName);
+            user.setUsername(userName);
             user.setLastName(lastName);
             PasswordEncoder encoder = new BCryptPasswordEncoder();
             user.setPassword(encoder.encode(password));

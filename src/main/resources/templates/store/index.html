@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{fragments/main}"
+    xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <title>Final Project</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container-fluid">
+        <h1>Starting Page</h1>
+        <ul>
+            <li th:each="storeItem : ${storeItemsList}">
+                <span th:text="${storeItem.name}"> </span>
+            </li>
+        </ul>
+    </div>
+
+</body>
+
+</html>
