@@ -14,6 +14,7 @@
             background-size: cover;
         }
     </style>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body>
@@ -60,6 +61,7 @@
                                 aria-label="The user password Confirmation." placeholder="Confirm Password" required />
                             <label class="floating-label text-secondary" for="confirmationPassword">Confirm Password</label>
                         </div>
+                        <div class="g-recaptcha" data-sitekey="6LdaMt8ZAAAAACOqUQRwrH675eBPsXDQc77h2yQe"></div>
                         <input type="submit" value="Create" class="btn btn-info" th:formaction="@{/login/createUser}" />
                     </div>
                 </div>
