@@ -111,7 +111,7 @@
                 }
 
                 $('input[name="password"]').on("focus input", function () {
-                    $('input[name="confirmationPassword"]').attr("pattern", "^" + $(this).val() + "$");
+                    $('input[name="confirmationPassword"]').attr("pattern", $(this).val());
                     $('div.popover-body').html(getText());
                     if ($(this).val().length == 0) {
                         $("#passwordEye").hide();

@@ -1,7 +1,10 @@
 package edu.utdallas.cs6303.finalproject.main;
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.ICredentialRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -12,7 +15,11 @@ import org.springframework.boot.web.embedded.tomcat.TomcatEmbeddedWebappClassLoa
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import edu.utdallas.cs6303.finalproject.services.dualauth.CredentialRepository;
 import edu.utdallas.cs6303.finalproject.services.storage.StorageProperties;
 import edu.utdallas.cs6303.finalproject.services.storage.StorageService;
 
@@ -25,6 +32,10 @@ import edu.utdallas.cs6303.finalproject.services.storage.StorageService;
 @EnableEncryptableProperties
 @EnableAutoConfiguration
 public class MainApplication {
+
+    @Autowired 
+    private ICredentialRepository credentialRepository;
+
     public static void main(String[] args) {
         SpringApplication.run(MainApplication.class, args);
     }
@@ -33,5 +44,13 @@ public class MainApplication {
     CommandLineRunner init(StorageService storageService) {
         return args -> storageService.init();
     }
+
+    @Bean
+    public GoogleAuthenticator googleAuthenticator() {
+        GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
+        googleAuthenticator.setCredentialRepository(credentialRepository);
+        return googleAuthenticator;
+    }
+
 
 }

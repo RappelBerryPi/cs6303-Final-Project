@@ -55,7 +55,7 @@ public class OrderService implements OrderServiceInterface {
     private OrderItem convertStoreItemToOrderItem(StoreItem storeItem) {
         OrderItem orderItem = new OrderItem();
         orderItem.setStoreItem(storeItem);
-        orderItem.setCostAtPurchaseTime(storeItem.getCost());
+        //orderItem.setCostAtPurchaseTime(storeItem.getCost());
         return orderItem;
     }
 

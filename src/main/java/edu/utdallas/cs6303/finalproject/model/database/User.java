@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
+import javax.transaction.Transactional;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,7 +42,7 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user")
     private Cart cart;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "UsersRoles", joinColumns = @JoinColumn(name = "UserID", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "RoleID", referencedColumnName = "id"))
     private Collection<Role> roles;
 

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import edu.utdallas.cs6303.finalproject.model.database.User;
 
-@Service
+@Service("UserDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired

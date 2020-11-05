@@ -14,7 +14,9 @@
             background-size: cover;
         }
 
-        .google-button,.google-button:active,.google-button:hover {
+        .google-button,
+        .google-button:active,
+        .google-button:hover {
             color: transparent;
             background-position: center center;
             background-size: cover;
@@ -22,7 +24,7 @@
         }
 
         .google-button {
-            background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_normal_web@2x.png) no-repeat ;
+            background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_normal_web@2x.png) no-repeat;
             background-size: cover;
         }
 
@@ -46,13 +48,13 @@
             </div>
             <div class="row">
                 <p class="center text-danger" th:if="${param.error}">
-                    Invalid username and password.
+                    Invalid username, password, or 2FA code.
                 </p>
                 <p class="center text-info" th:if="${param.logout}">
                     You have been logged out.
                 </p>
             </div>
-            <div class="row mtop-bottom-10-px">
+            <div class="row mtop-bottom-10-px margin-lr-0">
                 <form th:action="@{/login}" method="post" class="center">
                     <div class="form-group">
                         <input type="text" name="username" class="form-control" aria-label="The user name to log in."
@@ -64,20 +66,33 @@
                             placeholder="Password" />
                         <label class="floating-label text-secondary" for="password">Password</label>
                     </div>
-                    <input type="submit" value="Sign In" class="btn btn-primary" />
-                    <input type="submit" value="Create New" class="btn btn-info" th:formaction="@{/login/createUser}" th:formmethod="GET" />
-                    <input type="submit" value="Forgot Password" class="btn btn-danger" th:formaction="@{/login/forgotPassword}" th:formmethod="GET" />
+                    <div class="form-group">
+                        <input type="text" name="code" class="form-control" aria-label="The 2nd factor authentication code." placeholder="000000" />
+                        <label class="floating-label text-secondary" for="code"> Google Authenticator code</label>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+                            <input type="submit" value="Sign In" class="btn btn-primary" />
+                        </div>
+                        <div class="col-md">
+                            <a class="btn btn-info" th:href="@{/login/createUser}"> Create New </a>
+                        </div>
+                        <div class="col-md">
+                            <a class="btn btn-danger" th:href="@{/login/forgotPassword}" > Forgot Password </a>
+                        </div>
+                    </div>
                 </form>
             </div>
             <br />
             <div class="row">
-                <div class="col center">
+                <div class="col-md center">
                     <button type="button" class="btn google-button" onclick="GoogleOAuth()">
                         <i class="fab fa-google"></i> Sign in with Google
                     </button>
                 </div>
-                <div class="col">
-                    <button id="github-button" class="btn btn-block btn-social btn-github btn-outline-dark" onclick="GithubOAuth()">
+                <div class="col-md">
+                    <button id="github-button" class="btn btn-block btn-social btn-github btn-outline-dark"
+                        onclick="GithubOAuth()">
                         <i class="fab fa-github"></i> Sign in with Github
                     </button>
                     <script>
@@ -91,6 +106,70 @@
                 </div>
             </div>
         </section>
+        <th:block th:if="${showQRCode}">
+
+            <div id="qrCode" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"> Use this QR Code to log in </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body center">
+                            <section class="row">
+                                <div class="col">
+                                    Below is a QR code that is necessary for you to be able to log into this application.
+                                    Please follow the below steps:
+                                </div>
+                            </section>
+                            <section class="row">
+                                <ol class="list-group">
+                                    <li class="list-group-item list-group-item-action list-group-item-info">
+                                        Download Google Authenticator or the Microsoft Authenticator
+                                        apps which are available for both Android and iPhones.
+                                    </li>
+                                    <li class="list-group-item list-group-item-action list-group-item-info">
+                                        Click the "+" icon to add an account and select the option to scan a QR code.
+                                    </li>
+                                    <li class="list-group-item list-group-item-action list-group-item-info">
+                                        <em> Give the app permission to be able to use the camera if you have not already
+                                            done so.</em>
+                                    </li>
+                                    <li class="list-group-item list-group-item-action list-group-item-info">
+                                        Finally, scan the QR code below to setup your account in the app. The one time
+                                        password will then be used along with your regular password to ensure entry into
+                                        this application.
+                                    </li>
+                                </ol>
+                            </section>
+                            <section class="row">
+                                <div class="col">
+                                    <img th:src="${T(edu.utdallas.cs6303.finalproject.controllers.LoginController).REQUEST_MAPPING}
+                                    + @{/qrCode/}" class="img-thumbnail">
+                                </div>
+                            </section>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                $('#qrCode').modal('show');
+            </script>
+
+        </th:block>
+        <style>
+            a {
+                white-space: nowrap;
+            }
+        </style>
+
     </div>
 </body>
+
 </html>

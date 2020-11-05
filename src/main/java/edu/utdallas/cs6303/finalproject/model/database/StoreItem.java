@@ -1,25 +1,47 @@
 package edu.utdallas.cs6303.finalproject.model.database;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.ManyToOne;
+
+import edu.utdallas.cs6303.finalproject.model.database.enums.StoreItemCategoryEnum;
 
 @Entity
 public class StoreItem {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     private String name;
 
     @Column(precision = 16, scale = 2)
-    private BigDecimal cost;
+    private BigDecimal snackCost;
+
+    @Column(precision = 16, scale = 2)
+    private BigDecimal xsCost;
+
+    @Column(precision = 16, scale = 2)
+    private BigDecimal smallCost;
+
+    @Column(precision = 16, scale = 2)
+    private BigDecimal mediumCost;
+
+    @Column(precision = 16, scale = 2)
+    private BigDecimal largeCost;
+
+    @Column(precision = 16, scale = 2)
+    private BigDecimal doubleXlCost;
 
     @ManyToOne
     @JoinColumn(name = "image_id", foreignKey = @ForeignKey(name = "FK_StoreItem_FeaturedPhoto"))
@@ -27,15 +49,18 @@ public class StoreItem {
     
     private String shortDescription;
 
+    @Enumerated(EnumType.STRING)
+    private StoreItemCategoryEnum category;
+
     @Lob
     @Column
     private String longDescription;
 
-    //is active/ can purchase
+    //TODO: ?? is active/ can purchase
 
-    private ZonedDateTime openDate;
+    private Date openDate;
 
-    private ZonedDateTime archiveDate;
+    private Date archiveDate;
 
     private boolean visible;
 
@@ -63,14 +88,6 @@ public class StoreItem {
         this.name = name;
     }
 
-    public BigDecimal getCost() {
-        return cost;
-    }
-
-    public void setCost(BigDecimal cost) {
-        this.cost = cost;
-    }
-
     public UploadedFile getImage() {
         return image;
     }
@@ -95,19 +112,19 @@ public class StoreItem {
         this.longDescription = longDescription;
     }
 
-    public ZonedDateTime getOpenDate() {
+    public Date getOpenDate() {
         return openDate;
     }
 
-    public void setOpenDate(ZonedDateTime openDate) {
+    public void setOpenDate(Date openDate) {
         this.openDate = openDate;
     }
 
-    public ZonedDateTime getArchiveDate() {
+    public Date getArchiveDate() {
         return archiveDate;
     }
 
-    public void setArchiveDate(ZonedDateTime archiveDate) {
+    public void setArchiveDate(Date archiveDate) {
         this.archiveDate = archiveDate;
     }
 
@@ -123,7 +140,7 @@ public class StoreItem {
         return amountInStock;
     }
 
-    public void setAmmountInStock(long amountInStock) {
+    public void setAmountInStock(long amountInStock) {
         this.amountInStock = amountInStock;
     }
 
@@ -131,4 +148,61 @@ public class StoreItem {
         //TODO: base this off of open and close date amount in stock, and if visible also if deleted
         return true; 
     }
+
+    public BigDecimal getSnackCost() {
+        return snackCost;
+    }
+
+    public void setSnackCost(BigDecimal snackCost) {
+        this.snackCost = snackCost;
+    }
+
+    public BigDecimal getXsCost() {
+        return xsCost;
+    }
+
+    public void setXsCost(BigDecimal xsCost) {
+        this.xsCost = xsCost;
+    }
+
+    public BigDecimal getSmallCost() {
+        return smallCost;
+    }
+
+    public void setSmallCost(BigDecimal smallCost) {
+        this.smallCost = smallCost;
+    }
+
+    public BigDecimal getMediumCost() {
+        return mediumCost;
+    }
+
+    public void setMediumCost(BigDecimal mediumCost) {
+        this.mediumCost = mediumCost;
+    }
+
+    public BigDecimal getLargeCost() {
+        return largeCost;
+    }
+
+    public void setLargeCost(BigDecimal largeCost) {
+        this.largeCost = largeCost;
+    }
+
+    public BigDecimal getDoubleXlCost() {
+        return doubleXlCost;
+    }
+
+    public void setDoubleXlCost(BigDecimal doubleXlCost) {
+        this.doubleXlCost = doubleXlCost;
+    }
+
+    public StoreItemCategoryEnum getCategory() {
+        return category;
+    }
+
+    public void setCategory(StoreItemCategoryEnum category) {
+        this.category = category;
+    }
+
 }

@@ -1,11 +1,17 @@
 package edu.utdallas.cs6303.finalproject.services.user;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.zxing.WriterException;
+
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import edu.utdallas.cs6303.finalproject.model.database.Privilege;
@@ -30,4 +36,6 @@ public interface UserServiceInterface {
     List<Privilege> getAdminPrivileges();
 
     List<Privilege> getBasicEmployeePrivileges();
+    
+    ResponseEntity<Resource> getQRCode(Authentication authentication) throws WriterException, IOException;
 }

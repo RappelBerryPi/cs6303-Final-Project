@@ -3,6 +3,7 @@ package edu.utdallas.cs6303.finalproject.model.database;
 import java.util.Collection;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,7 +23,7 @@ public class Role {
     @ManyToMany(mappedBy = "roles")
     private Collection<User> users;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "RolesPrivileges",
         joinColumns = @JoinColumn(

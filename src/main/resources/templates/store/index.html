@@ -7,11 +7,20 @@
 </head>
 
 <body>
-    <div layout:fragment="content" class="container-fluid">
-        <h1>Starting Page</h1>
-        <ul>
-            <li th:each="storeItem : ${storeItemsList}">
-                <span th:text="${storeItem.name}"> </span>
+    <div layout:fragment="content" class="container">
+        <h1 class="center">Items</h1>
+        <ul class="list-group">
+            <li th:each="storeItem : ${storeItemsList}" class="list-group-item">
+                <div class="row">
+                    <div class="col-4">
+                        <img th:src="${imageURLBuilder.forDeviceInfo(deviceInfo).with(storeItem.image).build()}" class="img-fluid">
+                    </div>
+                    <div class="col-8 border rounded">
+                        <h1 th:text="${storeItem.name}"> </h1>
+                        <p th:text="${storeItem.shortDescription}"></p>
+                    </div>
+                </div>
+
             </li>
         </ul>
     </div>

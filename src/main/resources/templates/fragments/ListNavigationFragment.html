@@ -1,0 +1,89 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+</head>
+
+<body>
+    <section th:fragment="navigationFragment" class="row" th:unless="${listPageInformation.getPageObject().isEmpty()}" th:with="url=${url} ?: @{__${#httpServletRequest.requestURI}__}" th:inline="text">
+            <nav class="center" aria-label="Page Navigation">
+                <ul class="pagination">
+                    <li class="page-item" th:unless="${listPageInformation.isFirstPage}">
+                        <a class="page-link" th:href="@{${url}(page=${listPageInformation.getFirstPageNumber()},length=${listPageInformation.getLength()})}" aria-label="First">First</a>
+                    </li>
+                    <li class="page-item" th:unless="${listPageInformation.isFirstPage}">
+                        <a class="page-link" th:href="@{${url}(page=${listPageInformation.getPreviousPageNumber()},length=${listPageInformation.getLength()})}"  aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
+                    <li class="page-item" th:unless="${listPageInformation.isFirstPage}">
+                        <a class="page-link" th:href="@{${url}(page=${listPageInformation.getPreviousPageNumber()},length=${listPageInformation.getLength()})}"  th:text="${listPageInformation.pageObject.number}" aria-label="Previous">
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" th:href="@{${url}(page=${listPageInformation.getCurrentPageNumber()},length=${listPageInformation.getLength()})}" th:text="${listPageInformation.getCurrentPageNumber()}" aria-label="Current" >
+                        </a>
+                    </li>
+                    <li class="page-item" th:unless="${listPageInformation.isLastPage}">
+                        <a class="page-link" th:href="@{${url}(page=${listPageInformation.getNextPageNumber()},length=${listPageInformation.getLength()})}"  th:text="${listPageInformation.getNextPageNumber()}" aria-label="Next">
+                        </a>
+                    </li>
+                    <li class="page-item" th:unless="${listPageInformation.isLastPage}">
+                        <a class="page-link" th:href="@{${url}(page=${listPageInformation.getNextPageNumber()},length=${listPageInformation.getLength()})}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                    <li class="page-item" th:unless="${listPageInformation.isLastPage}">
+                        <a class="page-link" th:href="@{${url}(page=${listPageInformation.getLastPageNumber()},length=${listPageInformation.getLength()})}" aria-label="Last">Last</a>
+                    </li>
+                </ul>
+            </nav>
+        </section>
+
+        <script th:fragment="navigationFragmentJavascript" th:with="selector = ${selector} ?: '#Test',initSelector = ${initSelector} ?: '', url = ${url} ?: @{__${#httpServletRequest.requestURI}__}" th:inline="text" >
+            $(function () {
+                $("[[${selector}]]").on('click', "li.page-item a", function (event) {
+                    ListNavigationEventHandler(event, '');
+                });
+                $("[[${initSelector}]]").on('click', function (event) {
+                    ListNavigationEventHandler(event, "[[${url}]]");
+                });
+
+                function ListNavigationEventHandler(event, url) {
+                    let href = url;
+                    if (url == '') {
+                        event.preventDefault();
+                        href = event.target.href;
+                    }
+                    $.get(href, function (data) {
+                        $("[[${selector}]]").html(data);
+                    })
+                }
+            });
+        </script>
+
+        <script th:fragment="singularSelection" th:with="selector = ${selector} ?: '#choosePhotoModalBody', item = ${item} ?: 'item', itemSelected = ${itemSelected} ?: 'item-selected'" th:inline="text">
+            $(function () {
+                $("[[${selector}]]").on("click", ".[[${item}]]", function () {
+                    $("[[${selector}]]").children(".row").children(".[[${itemSelected}]]").addClass("[[${item}]]").removeClass("[[${itemSelected}]]");
+                    $(this).addClass("[[${itemSelected}]]").removeClass("[[${item}]]");
+                });
+                $("[[${selector}]]").on("click", ".[[${itemSelected}]]", function () {
+                    $(this).removeClass("[[${itemSelected}]]").addClass("[[${item}]]");
+                });
+
+                $("#choosePhotoSaveButton").click(function () {
+                    let items_selected = $("[[${selector}]]").children('.row').children(".[[${itemSelected}]]");
+                    if (items_selected.length == 0) {
+                        return;
+                    }
+                    let event = new CustomEvent("itemSelectionSubmission", {"detail": items_selected})
+                    document.dispatchEvent(event);
+                });
+            });
+        </script>
+
+
+    </body>
+</html>

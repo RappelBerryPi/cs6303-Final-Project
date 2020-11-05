@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{fragments/main}">
+
+<body>
+	<div layout:fragment="content" class="container-fluid">
+		<form method="post" enctype="multipart/form-data" th:action="@{/Files/(${_csrf.parameterName}=${_csrf.token})}"
+			class="single-form centered-text">
+			<div class="custom-file">
+				<input type="file" class="custom-file-input" name="file" id="customFile" />
+				<label class="custom-file-label" for="customFile">Upload Files</label>
+				<br />
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+						<span class="input-group-text" id="FileName-addon1">File Name:</span>
+					</div>
+					<input type="text" class="form-control" placeholder="File Name" aria-label="Filename"
+						aria-describedby="FileName-addon1" name="filename">
+				</div>
+				<input type="submit" value="Upload" class="btn btn-primary" />
+				<section th:if="${message}" class="row">
+					<h2 th:text="${message}" style="margin: 0 auto;" />
+				</section>
+			</div>
+		</form>
+
+		<!--/*
+		<section class="row">
+			<div class="fill-screen center">
+				<a th:each="file : ${img_files}" class="item" th:href="${file}" target="_blank">
+					<div class="polaroid">
+						<img th:src="${file}">
+						<div th:text="${#strings.arraySplit(file,'/')[3]}" class="caption"> </div>
+						</div>
+					</a>
+				</div>
+			</section>
+		*/-->
+	</div>
+</body>
+
+</html>

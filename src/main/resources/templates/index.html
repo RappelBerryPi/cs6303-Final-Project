@@ -4,28 +4,212 @@
 
 <head>
     <title>Final Project</title>
+    <style>
+        body:before {
+            content: '';
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background-image: url("/Files/blue-stripe-background.jpg");
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-position: 100% 100%;
+            background-size: cover;
+            /* filter: blur(5px); */
+            z-index: -2;
+        }
+
+        div.container {
+            background-color: white;
+        }
+    </style>
 </head>
 
 <body>
-    <div layout:fragment="content" class="container-fluid">
-        <h1>Starting Page</h1>
-        <a th:text="${myValue}" href="#"></a>
-        <h2 th:text="${mySecondValue}"></h2>
-        <div class="form-group">
-            <input type="number" class="form-control" id="exampleInputEmail1" aria-describedby="gmailHelp"
-                placeholder="Enter gmail">
-            <label for="exampleInputEmail1" class="floating-label text-secondary">Enter gmail</label>
-            <small id="gmailHelp" class="form-text text-muted">We'll never share your gmail with anyone else.</small>
+    <div layout:fragment="content" class="container">
+        <section class="row">
+            <div class="col-lg-4">
+                <img src="/MomAndPop.png" />
+            </div>
+            <div class="col-lg-8" style="justify-content: center; align-items: center; display: flex;">
+                <div>
+                    <h1 class="center" style="font-size: 4.5em; margin-top: 1em;"> Mom &amp; Pop's </h1>
+                    <h1 class="center"> Gourmet Popcorn Co. </h1>
+                </div>
+            </div>
+        </section>
+        <!--
+        <section class="row border border-dark rounded center"
+        style="max-width: 95%; margin: 0 auto; padding: 53px; margin-bottom: 7em;  box-shadow: 0 0.2rem 1.2rem rgba(0,
+        0, 0, 0.2);">
+        -->
+        <section class="row center" style="max-width: 95%; margin: 0 auto; padding: 53px; margin-bottom: 7em;  box-shadow: 0 0.2rem 1.2rem rgba(0,
+        0, 0, 0.2);">
+
+            <div class="col">
+                <p style="font-size: 1.3em;">
+                    Welcome to Mom & Pop's Gourmet Popcorn Co. We provide quality handcrafted popcorn in assorted
+                    flavors ranging from our Classic Butter to crowd favorites like Pumpkin Pie
+                    Drizzle. It is our mission to provide our customers with the best tasting popcorn prepared with the
+                    freshest ingredients that will bring satisfaction to every occasion. Please browse around the
+                    shop and explore all the flavors we provide. Hit contact for any questions you might have.
+                    Thank you for supporting our small business!
+                </p>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col-lg">
+                <img src="/Files/popcorn 3.jpg" class="img-fluid" alt="Responsive image">
+            </div>
+            <div class="col-lg">
+                <img src="/Files/popcorn 1.jpg" class="img-fluid" alt="Responsive image">
+            </div>
+            <div class="col-lg">
+                <img src="/Files/popcorn 2.jpg" class="img-fluid" alt="Responsive image">
+            </div>
+        </section>
+        <section class="row">
+            <div class="col center">
+                <button class="btn btn-large btn-primary" style="width: 20vw; height: 5vh">Shop Now</button>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col">
+                <div class="border" style="width: 95%;">
+                </div>
+            </div>
+            <div class="col">
+                <div class="border" style="width: 95%;">
+                </div>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col">
+                <div class="border" style="width: 95%;">
+                </div>
+            </div>
+            <div class="col">
+                <div class="border" style="width: 95%;">
+                </div>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col center">
+                <div class="border rounded background-big-text" style="background-image: url('/Files/Popcorn15.jpg');"> </div>
+                <div class="big-text"> Classic Flavors </div>
+            </div>
+            <div class="col center">
+                <div class="border rounded background-big-text" style="background-image: url('/Files/pop2.jpg');"> </div>
+                <div class="big-text"> Crowd Favorites </div>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col center">
+                <div class="border rounded background-big-text" style="background-image: url('/Files/pop11.webp');"> </div>
+                <div class="big-text"> Seasonal Flavors </div>
+            </div>
+            <div class="col center">
+                <div class="border rounded background-big-text" style="background-image: url('/Files/pop3.png');"> </div>
+                <div class="big-text"> Famous Blends </div>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col center">
+                <p style="font-family: Playlist; font-size: 3.5em;"> Follow us on Instagram</p>
+            </div>
+        </section>
+
+        <section class="row">
+            <div class="col-lg">
+                <div
+                    style="max-width: 614px; border-radius: 3px; border: 1px #DBDBDB solid; font-family: 'Helvetica', sans-serif;">
+                    <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; font-weight: bold;">
+                            <div
+                                style="background-image: linear-gradient(to bottom left, #C62D90, #F99B4A); border-radius: 100%; width: 40px; height: 40px; text-align: center;">
+                                <img src="[ICON URL]"
+                                    style="width: 32px; height: 32px; min-width: 32px; border-radius: 100%; border: 2px white solid; margin: 2px auto;" />
+                            </div><span style="padding-left: 10px">[USERNAME]</span>
+                        </div>
+                        <span style="font-weight: bold;">&hellip;</span>
+                    </div>
+                    <img src='/Files/pop3.png' alt='' style="width: 100%; max-width: 100%; max-height: none;" />
+                    <div style="padding: 16px;">
+                        <div style="text-align: left; display: flex;">
+                            <form method="post" action="[POST URL]?mode=reply" style="margin:0 10px 0 0;padding:5px 0;">
+                                <textarea name="body"
+                                    style="display:none;">&lt;span style=&quot;font-size: 14px; margin: 5px 0;&quot;&gt;&lt;b&gt;[USERNAME]&lt;/b&gt; liked your post&lt;/span&gt;</textarea>
+                                <button type="submit"
+                                    style="width:100%; appearance: none; background-image: none; border: none; background-color: transparent; padding: 0;"><svg
+                                        aria-label="Like" fill="#262626" height="24" viewBox="0 0 48 48" width="24">
+                                        <path clip-rule="evenodd"
+                                            d="M34.3 3.5C27.2 3.5 24 8.8 24 8.8s-3.2-5.3-10.3-5.3C6.4 3.5.5 9.9.5 17.8s6.1 12.4 12.2 17.8c9.2 8.2 9.8 8.9 11.3 8.9s2.1-.7 11.3-8.9c6.2-5.5 12.2-10 12.2-17.8 0-7.9-5.9-14.3-13.2-14.3zm-1 29.8c-5.4 4.8-8.3 7.5-9.3 8.1-1-.7-4.6-3.9-9.3-8.1-5.5-4.9-11.2-9-11.2-15.6 0-6.2 4.6-11.3 10.2-11.3 4.1 0 6.3 2 7.9 4.2 3.6 5.1 1.2 5.1 4.8 0 1.6-2.2 3.8-4.2 7.9-4.2 5.6 0 10.2 5.1 10.2 11.3 0 6.7-5.7 10.8-11.2 15.6z"
+                                            fill-rule="evenodd"></path>
+                                    </svg></button>
+                            </form>
+                            <form method="post" action="[POST URL]?mode=reply" style="margin:0;padding:5px 0;">
+                                <textarea name="body"
+                                    style="display:none;">&lt;span style=&quot;font-size: 14px; margin: 5px 0;&quot;&gt;&lt;b&gt;[USERNAME]&lt;/b&gt; reply content &lt;span style=&quot;color: #003569&quot;&gt;#HashTag&lt;/span&gt;&lt;/span&gt;</textarea>
+                                <button type="submit"
+                                    style="width:100%; appearance: none; background-image: none; border: none; background-color: transparent; padding: 0;"><svg
+                                        aria-label="Comment" fill="#262626" height="24" viewBox="0 0 48 48" width="24">
+                                        <path clip-rule="evenodd"
+                                            d="M47.5 46.1l-2.8-11c1.8-3.3 2.8-7.1 2.8-11.1C47.5 11 37 .5 24 .5S.5 11 .5 24 11 47.5 24 47.5c4 0 7.8-1 11.1-2.8l11 2.8c.8.2 1.6-.6 1.4-1.4zm-3-22.1c0 4-1 7-2.6 10-.2.4-.3.9-.2 1.4l2.1 8.4-8.3-2.1c-.5-.1-1-.1-1.4.2-1.8 1-5.2 2.6-10 2.6-11.4 0-20.6-9.2-20.6-20.5S12.7 3.5 24 3.5 44.5 12.7 44.5 24z"
+                                            fill-rule="evenodd"></path>
+                                    </svg></button>
+                            </form>
+                        </div>
+                        <div style="font-size: 14px; margin: 5px 0;">
+                            <b>[USERNAME]</b> POST CONTENT <span style="color: #003569">#HashTag</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+        <div style="max-width: 614px; border-radius: 3px; border: 1px #DBDBDB solid; font-family: 'Helvetica', sans-serif;">
+            <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; font-weight: bold;">
+                    <div
+                        style="background-image: linear-gradient(to bottom left, #C62D90, #F99B4A); border-radius: 100%; width: 40px; height: 40px; text-align: center;">
+                        <img src="[ICON URL]"
+                            style="width: 32px; height: 32px; min-width: 32px; border-radius: 100%; border: 2px white solid; margin: 2px auto;" />
+                    </div><span style="padding-left: 10px">[USERNAME]</span>
+                </div>
+                <span style="font-weight: bold;">&hellip;</span>
+            </div>
+            <img src='/Files/pop2.jpg' alt='' style="width: 100%; max-width: 100%; max-height: none;" />
+            <div style="padding: 16px;">
+                <div style="text-align: left; display: flex;">
+                    <form method="post" action="[POST URL]?mode=reply" style="margin:0 10px 0 0;padding:5px 0;">
+                        <textarea name="body"
+                            style="display:none;">&lt;span style=&quot;font-size: 14px; margin: 5px 0;&quot;&gt;&lt;b&gt;[USERNAME]&lt;/b&gt; liked your post&lt;/span&gt;</textarea>
+                        <button type="submit"
+                            style="width:100%; appearance: none; background-image: none; border: none; background-color: transparent; padding: 0;"><svg
+                                aria-label="Like" fill="#262626" height="24" viewBox="0 0 48 48" width="24">
+                                <path clip-rule="evenodd"
+                                    d="M34.3 3.5C27.2 3.5 24 8.8 24 8.8s-3.2-5.3-10.3-5.3C6.4 3.5.5 9.9.5 17.8s6.1 12.4 12.2 17.8c9.2 8.2 9.8 8.9 11.3 8.9s2.1-.7 11.3-8.9c6.2-5.5 12.2-10 12.2-17.8 0-7.9-5.9-14.3-13.2-14.3zm-1 29.8c-5.4 4.8-8.3 7.5-9.3 8.1-1-.7-4.6-3.9-9.3-8.1-5.5-4.9-11.2-9-11.2-15.6 0-6.2 4.6-11.3 10.2-11.3 4.1 0 6.3 2 7.9 4.2 3.6 5.1 1.2 5.1 4.8 0 1.6-2.2 3.8-4.2 7.9-4.2 5.6 0 10.2 5.1 10.2 11.3 0 6.7-5.7 10.8-11.2 15.6z"
+                                    fill-rule="evenodd"></path>
+                            </svg></button>
+                    </form>
+                    <form method="post" action="[POST URL]?mode=reply" style="margin:0;padding:5px 0;">
+                        <textarea name="body"
+                            style="display:none;">&lt;span style=&quot;font-size: 14px; margin: 5px 0;&quot;&gt;&lt;b&gt;[USERNAME]&lt;/b&gt; reply content &lt;span style=&quot;color: #003569&quot;&gt;#HashTag&lt;/span&gt;&lt;/span&gt;</textarea>
+                        <button type="submit"
+                            style="width:100%; appearance: none; background-image: none; border: none; background-color: transparent; padding: 0;"><svg
+                                aria-label="Comment" fill="#262626" height="24" viewBox="0 0 48 48" width="24">
+                                <path clip-rule="evenodd"
+                                    d="M47.5 46.1l-2.8-11c1.8-3.3 2.8-7.1 2.8-11.1C47.5 11 37 .5 24 .5S.5 11 .5 24 11 47.5 24 47.5c4 0 7.8-1 11.1-2.8l11 2.8c.8.2 1.6-.6 1.4-1.4zm-3-22.1c0 4-1 7-2.6 10-.2.4-.3.9-.2 1.4l2.1 8.4-8.3-2.1c-.5-.1-1-.1-1.4.2-1.8 1-5.2 2.6-10 2.6-11.4 0-20.6-9.2-20.6-20.5S12.7 3.5 24 3.5 44.5 12.7 44.5 24z"
+                                    fill-rule="evenodd"></path>
+                            </svg></button>
+                    </form>
+                </div>
+                <div style="font-size: 14px; margin: 5px 0;">
+                    <b>[USERNAME]</b> POST CONTENT <span style="color: #003569">#HashTag</span>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                placeholder="Enter email">
-            <label for="exampleInputEmail1" class="floating-label text-secondary">Enter email</label>
-            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-        </div>
-        <div sec:authorize="isAuthenticated()">
-            <div th:text="${#authentication.authorities}"></div>
-        </div>
+            </div>
+        </section>
     </div>
 
 </body>

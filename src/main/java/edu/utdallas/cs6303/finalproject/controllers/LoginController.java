@@ -1,25 +1,26 @@
 package edu.utdallas.cs6303.finalproject.controllers;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.transaction.NotSupportedException;
 import javax.validation.Valid;
 
+import com.google.zxing.WriterException;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,6 +42,9 @@ import edu.utdallas.cs6303.finalproject.services.user.UserServiceInterface;
 @Controller
 @RequestMapping(LoginController.REQUEST_MAPPING)
 public class LoginController {
+
+    // TODO: create a safehtml class to validate safehtml and especially for form
+    // inputs such as LOB objects.
 
     @Autowired
     private OidcUserAuthenticationService oidcUserAuthenticationService;
@@ -78,21 +82,27 @@ public class LoginController {
     }
 
     @PostMapping("/createUser")
-    public String createUserStep2(@Valid CreateUserForm createUserForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request) {
-        //TODO: Finish creating user (and maybe logging them in??)
+    public String createUserStep2(@Valid CreateUserForm createUserForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request) throws WriterException {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult." + CREATE_USER_FORM_ATTRIBUTE_NAME, bindingResult);
             redirectAttributes.addFlashAttribute(CREATE_USER_FORM_ATTRIBUTE_NAME, createUserForm);
             return HomeController.REDIRECT_TO + LoginController.REQUEST_MAPPING + "/createUser";
         }
-        User user = userService.createUserFromUserForm(createUserForm);
-        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(user.getUsername(), createUserForm.getPassword());
-        Authentication auth = authenticationManager.authenticate(authReq);
-	    SecurityContext securityContext = SecurityContextHolder.getContext();
-	    securityContext.setAuthentication(auth);
-	    HttpSession session = request.getSession(true);
-	    session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
-        return "login";
+        User                                user            = userService.createUserFromUserForm(createUserForm);
+        UsernamePasswordAuthenticationToken authReq         = new UsernamePasswordAuthenticationToken(user.getUsername(), createUserForm.getPassword());
+        Authentication                      auth            = authenticationManager.authenticate(authReq);
+        SecurityContext                     securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(auth);
+        HttpSession session = request.getSession(true);
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+        redirectAttributes.addFlashAttribute("showQRCode", true);
+        return HomeController.REDIRECT_TO + REQUEST_MAPPING;
+    }
+
+    @GetMapping("/qrCode/")
+    @ResponseBody
+    public ResponseEntity<Resource> getQrCode(Authentication authentication) throws WriterException, IOException {
+        return userService.getQRCode(authentication);
     }
 
     private static final String FORGOT_PASSWORD_FORM_ATTRIBUTE_NAME = "forgotPasswordForm";

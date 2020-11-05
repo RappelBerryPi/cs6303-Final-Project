@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{fragments/main}"
+    xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <title>Final Project</title>
+
+    <head th:include="~{fragments/tinymceFragment :: tinymceHead}"> </head>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container-fluid">
+        <section class="row" style="max-width: 90%; margin: 0 auto; margin-bottom: 5px;">
+
+            <form th:action="${T(edu.utdallas.cs6303.finalproject.controllers.StoreController).REQUEST_MAPPING} + @{/new/}"
+                th:object="${item}" method="post" class="center">
+                <div th:replace="~{fragments/errorInForm.html :: errorInForm}"></div>
+                <section class="rounded" style="background-color: white;">
+                    <div class="row">
+                        <h1 class="center"> New Item </h1>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div style="display: block;" class="center">
+                            <div class="form-group">
+                                <input type="text" th:field="*{name}" class="form-control" aria-label="The Name of The item"
+                                    placeholder="Name" />
+                                <label class="floating-label text-secondary" for="name">Name</label>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <label class="input-group-text"> Category </label>
+                                </div>
+                                <select th:field="*{category}" class="custom-select">
+                                    <option selected value="">Choose a Category</option> 
+                                    <th:block th:each="cat: ${categories}">
+                                    <option th:value="${cat}" th:text="${#strings.capitalize(#strings.toLowerCase(cat))}"></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">$</div>
+                                </div>
+                                <input type="text" th:field="*{snackCost}" class="form-control" aria-label="The Cost of The item"
+                                    placeholder="0.00"
+                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.ItemForm).COST_REGEX}" />
+                                <label class="floating-label text-secondary" for="snackCost">snack cost</label>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">$</div>
+                                </div>
+                                <input type="text" th:field="*{xsCost}" class="form-control" aria-label="The Cost of The item"
+                                    placeholder="0.00"
+                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.ItemForm).COST_REGEX}" />
+                                <label class="floating-label text-secondary" for="xsCost">Xtra-small cost</label>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">$</div>
+                                </div>
+                                <input type="text" th:field="*{smallCost}" class="form-control" aria-label="The Cost of The item"
+                                    placeholder="0.00"
+                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.ItemForm).COST_REGEX}" />
+                                <label class="floating-label text-secondary" for="smallCost">small cost</label>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">$</div>
+                                </div>
+                                <input type="text" th:field="*{mediumCost}" class="form-control" aria-label="The Cost of The item"
+                                    placeholder="0.00"
+                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.ItemForm).COST_REGEX}" />
+                                <label class="floating-label text-secondary" for="mediumCost">medium cost</label>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">$</div>
+                                </div>
+                                <input type="text" th:field="*{largeCost}" class="form-control" aria-label="The Cost of The item"
+                                    placeholder="0.00"
+                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.ItemForm).COST_REGEX}" />
+                                <label class="floating-label text-secondary" for="largeCost">large cost</label>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">$</div>
+                                </div>
+                                <input type="text" th:field="*{doubleXlCost}" class="form-control" aria-label="The Cost of The item"
+                                    placeholder="0.00"
+                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.ItemForm).COST_REGEX}" />
+                                <label class="floating-label text-secondary" for="doubleXlCost">double extra large cost</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="date" th:field="*{openDate}" class="form-control"
+                                aria-label="The Date to begin the availability of the item" placeholder="yyyy-MM-dd" />
+                                <label class="floating-label text-secondary" for="openDate">Date when available</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="date" th:field="*{archiveDate}" class="form-control"
+                                    aria-label="The Date to close the availability of the item" placeholder="yyyy-MM-dd" />
+                                <label class="floating-label text-secondary" for="openDate">Date when closed</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" th:field="*{alwaysAvailable}" class="form-check-input" aria-label="Whether or not
+                            the item is always visible" />
+                                <label class="form-check-label" for="alwaysAvailable"> Item is always available</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" th:field="*{visible}" class="form-check-input" aria-label="Whether or not
+                            the item is visible" />
+                                <label class="form-check-label" for="visible"> Item is visible to customers</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" th:field="*{amountInStock}" class="form-control"
+                                    aria-label="The amount of stock of The item" placeholder="100" />
+                                <label class="floating-label text-secondary" for="amountInStock">Amount in stock (in cups)</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" th:field="*{shortDescription}" class="form-control"
+                                    aria-label="The short Description of the item" placeholder="short Description" />
+                                <label class="floating-label text-secondary" for="shortDescription">short Description</label>
+                            </div>
+
+                            <div class="input-group">
+                                <input type="text" th:field="*{imageName}" class="form-control" aria-label="The blog posts featured photo." />
+                                <label class="floating-label text-secondary" for="featuredPhotoName">Photo Name</label>
+                                <div class="input-group-append">
+                                    <div class="modal fade" id="choosePhoto" tabindex="-1" role="dialog" aria-hidden="true"
+                                        style="display: none;">
+                                        <div class="modal-dialog modal-dialog-centered modal-xxl" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title"> Choose Featured Photo </h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body" id="choosePhotoModalBody">
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Cancel</button>
+                                                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                                        id="choosePhotoSaveButton">Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button id="choosePhotoStartButton" class="btn btn-secondary" type="button"
+                                        data-toggle="modal" data-target="#choosePhoto">Choose Photo</button>
+                                </div>
+                            </div>
+                            <label class="text-secondary" for="longDescription">Long Description</label>
+                            <textarea class="tinymce-editor" th:field="*{longDescription}" style="height: 70vh;"></textarea>
+                            <!-- TODO: update the long description to be a longer description in a text field, offer the
+                        tinymce editor for this and validate the input as safehtml -->
+
+                            <input type="submit" value="Submit" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </section>
+
+            </form>
+        </section>
+
+        <script
+            th:replace="~{fragments/ListNavigationFragment.html :: navigationFragmentJavascript(selector = '#choosePhotoModalBody',initSelector = '#choosePhotoStartButton', url='/Images/')}"></script>
+
+        <script th:replace="~{fragments/ListNavigationFragment.html :: singularSelection(item = 'item', itemSelected = 'item-selected')}"></script>
+        
+        <script>
+            $(function() {
+                $(document).on('itemSelectionSubmission', function(event) {
+                    let fileName = $(event.detail[0]).children("div.image").children("input[type='hidden']").val()
+                    $("#imageName").val(fileName);
+                });
+
+                $("#alwaysAvailable1").on('change', function() {
+                    if ($(this).is(":checked")) {
+                        $("#openDate").attr("disabled","true");
+                        $("#archiveDate").attr("disabled","true");
+                    } else {
+                        $("#openDate").removeAttr("disabled");
+                        $("#archiveDate").removeAttr("disabled");
+                    }
+                })
+            });
+
+        </script>
+    </div>
+
+</body>
+
+</html>

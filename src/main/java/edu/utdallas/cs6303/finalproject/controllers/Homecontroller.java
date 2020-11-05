@@ -16,6 +16,11 @@ public class HomeController {
         return "index";
     }
 
+    @GetMapping("ContactUs")
+    public String contactUs(Model model) {
+        return "contact";
+    }
+
     
     public static final String REDIRECT_TO = "redirect:";
 }

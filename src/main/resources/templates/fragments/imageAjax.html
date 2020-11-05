@@ -1,0 +1,22 @@
+<th:block th:with="images = ${listPageInformation.pageObject.content}">
+    <th:block th:if="${images}" th:each="image, iterStat: ${images}">
+        <th:block th:if="(${iterStat.index} % 4 == 0) and !${iterStat.first} and !${iterStat.last}" >
+            </section>
+        </th:block>
+        <th:block th:if="(${iterStat.index} % 4 == 0) and (!${iterStat.last})" >
+            <section class="row">
+        </th:block>
+        <div class="item col-lg-3 col-md-6 col-sm-6">
+            <div class="image">
+                <img th:src="${imageURLBuilder.buildThumbnailURL(image)}" class="img-fluid">
+                <div class="caption" th:text="${image.description}"> </div>
+                <input type="hidden" th:value="${image.fileName}">
+            </div>
+        </div>
+        <th:block th:if="${iterStat.last}" >
+            </section>
+        </th:block>
+    </th:block>
+</th:block>
+
+<section th:replace="~{fragments/ListNavigationFragment.html :: navigationFragment(url = '/Images/')}"></section>

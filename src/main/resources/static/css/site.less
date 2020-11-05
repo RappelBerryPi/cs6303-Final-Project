@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "playlist";
+    src: url("../fonts/playlistscript.woff") format("woff");
+}
+
 html {
     scroll-behavior: smooth;
     height: 100%;
@@ -9,6 +14,7 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
+    font-family: 'Playfair Display', serif;
 }
 
 footer {
@@ -24,6 +30,7 @@ footer {
     padding: 3%;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     margin: 0px;
+
 }
 
 .nav-right {
@@ -31,7 +38,9 @@ footer {
     margin-left: auto;
 }
 
-.form-control {
+.form-control[type="password"],
+.form-control[type="text"]:not([placeholder="0.00"]),
+.form-control[type="email"] {
     transition: transform .25s, border-color .25s ease-in-out;
     border-radius: 5px;
     background-color: transparent;
@@ -56,7 +65,7 @@ footer {
     &:focus,
     &:not(:placeholder-shown) {
         &+.floating-label {
-            z-index: 2500;
+            z-index: 100;
 
             transition: transform .25s ease-in-out;
             transform: translate(0, -1.25em) scale(.9);
@@ -69,9 +78,42 @@ footer {
     }
 }
 
-.form-group {
+.form-control[type="text"][placeholder="0.00"] {
+    &+.floating-label {
+        left: 2.5em;
+    }
+
+}
+
+.form-control[type="text"][placeholder="0.00"],
+.form-control[type="date"],
+.form-control[type="number"] {
+    &+.floating-label {
+        position: absolute;
+        top: 0.35em;
+        display: inline-block;
+        width: auto;
+        margin: 0;
+        user-select: none;
+        z-index: 100;
+        transform: translate(0, -1.25em) scale(.9);
+        background-color: inherit;
+    }
+}
+
+.form-control[type="date"],
+.form-control[type="number"] {
+    &+.floating-label {
+        left: 0.75em;
+    }
+}
+
+.form-group,
+.input-group,
+.form-check {
     position: relative;
     background-color: white;
+    margin-bottom: 1rem;
 }
 
 .centered-text {
@@ -94,7 +136,8 @@ ul.no-style {
     color: green;
 }
 
-.fas.fa-ban, .fas.fa-times {
+.fas.fa-ban,
+.fas.fa-times {
     color: red;
 }
 
@@ -120,4 +163,64 @@ ul.no-style {
         background: url(/google/google_signin_buttons/web/2x/btn_google_signin_light_pressed_web@2x.png) no-repeat;
         background-size: cover;
     }
+}
+
+section {
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.form-check-input {
+    position: initial;
+    margin: 0;
+
+    &,
+    .form-check-label {
+        vertical-align: middle;
+    }
+}
+
+.modal-xxl {
+    width: 90%;
+    max-width: 90%;
+}
+
+@media (max-width: 576px) {
+    .margin-lr-0 {
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    .single-form {
+        width: 90%;
+    }
+}
+
+div.item {
+    div.image {
+        transform: scale(0.8, 0.8);
+        transition: all 0.35s;
+    }
+}
+
+div.item-selected {
+    div.image {
+        transition: all 0.35s;
+    }
+}
+
+.background-big-text {
+
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 20em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* filter: blur(5px); */
+}
+
+.big-text {
+    font-size: 1.5em;
 }

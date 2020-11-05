@@ -8,14 +8,14 @@
         <version>2.3.3.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>edu.utdallas.cs6303</groupId>
+    <groupId>edu.utdallas.cs6303.finalproject</groupId>
     <artifactId>finalproject</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo</name>
+    <name>finalproject</name>
     <description>Final Project as an Ecommerce website with Security Features enabled.</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>15</java.version>
     </properties>
 
     <dependencies>
@@ -102,7 +102,22 @@
             <artifactId>passay</artifactId>
             <version>1.6.0</version>
         </dependency>
+        <dependency>
+          <groupId>com.warrenstrange</groupId>
+          <artifactId>googleauth</artifactId>
+          <version>1.4.0</version>
+        </dependency>
     
+      <dependency>
+        <groupId>com.google.zxing</groupId>
+        <artifactId>core</artifactId>
+        <version>3.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.zxing</groupId>
+        <artifactId>javase</artifactId>
+        <version>3.4.0</version>
+      </dependency>
     </dependencies>
 
     <build>
@@ -110,6 +125,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+
             </plugin>
             <plugin>
               <groupId>com.github.ulisesbocchio</groupId>
