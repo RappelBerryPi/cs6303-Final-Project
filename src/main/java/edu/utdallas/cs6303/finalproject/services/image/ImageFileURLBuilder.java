@@ -32,6 +32,6 @@ public class ImageFileURLBuilder implements ImageFileURLBuilderInterface {
         String uploadedFileName = this.uploadedFile.getFileName();
         String webpExtension    = this.deviceInfo.getSupportsWebP() ? ".webp" : "";
         String deviceURLSize    = this.deviceInfo.getImgFileSizePath();
-        return FileUploadController.REQUESTMAPPING + "/" + deviceURLSize + "/" + uploadedFileName + webpExtension;
+        return FileUploadController.REQUEST_MAPPING + "/" + deviceURLSize + "/" + uploadedFileName + webpExtension;
     }
 }

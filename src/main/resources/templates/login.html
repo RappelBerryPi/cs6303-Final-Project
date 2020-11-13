@@ -41,10 +41,18 @@
 </head>
 
 <body>
-    <div layout:fragment="content" class="container-fluid" style="height: 90vh; position: relative;">
-        <section class="centered-text single-form rounded" style="background-color: white;">
+    <div layout:fragment="content" class="container-fluid">
+        <section class="centered-text single-form rounded" style="background-color: white; margin: 10px auto;">
             <div sec:authorize="isAnonymous()" class="row" style="margin-bottom: 10px">
                 <h1 class="center"> Please Sign In</h1>
+            </div>
+            <div th:if="${passwordResetEmailSent}" class="row">
+                <p class="center text-danger">
+                    A password Reset email has been sent
+                </p>
+                <p class="center text-info">
+                    (not really since this is really for demonstration)
+                </p>
             </div>
             <div class="row">
                 <p class="center text-danger" th:if="${param.error}">
@@ -65,9 +73,12 @@
                         <input type="password" name="password" class="form-control" aria-label="The user password."
                             placeholder="Password" />
                         <label class="floating-label text-secondary" for="password">Password</label>
+                        <i id="passwordeye" style="position: absolute; right: 12px; top: 30%; z-index: 1; display: none;"
+                            class="fa fa-eye"></i>
                     </div>
                     <div class="form-group">
-                        <input type="text" name="code" class="form-control" aria-label="The 2nd factor authentication code." placeholder="000000" />
+                        <input type="text" name="code" class="form-control" aria-label="The 2nd factor authentication code."
+                            placeholder="000000" />
                         <label class="floating-label text-secondary" for="code"> Google Authenticator code</label>
                     </div>
                     <div class="row">
@@ -78,7 +89,7 @@
                             <a class="btn btn-info" th:href="@{/login/createUser}"> Create New </a>
                         </div>
                         <div class="col-md">
-                            <a class="btn btn-danger" th:href="@{/login/forgotPassword}" > Forgot Password </a>
+                            <a class="btn btn-danger" th:href="@{/login/forgotPassword}"> Forgot Password </a>
                         </div>
                     </div>
                 </form>
@@ -90,20 +101,11 @@
                         <i class="fab fa-google"></i> Sign in with Google
                     </button>
                 </div>
-                <div class="col-md">
-                    <button id="github-button" class="btn btn-block btn-social btn-github btn-outline-dark"
-                        onclick="GithubOAuth()">
-                        <i class="fab fa-github"></i> Sign in with Github
-                    </button>
-                    <script>
-                        function GoogleOAuth() {
-                            window.location.href = "/oauth2/authorization/google";
-                        }
-                        function GithubOAuth() {
-                            window.location.href = "/oauth2/authorization/github";
-                        }
-                    </script>
-                </div>
+                <script>
+                    function GoogleOAuth() {
+                        window.location.href = "/oauth2/authorization/google";
+                    }
+                </script>
             </div>
         </section>
         <th:block th:if="${showQRCode}">
@@ -146,6 +148,13 @@
                             </section>
                             <section class="row">
                                 <div class="col">
+                                    Need to copy and paste into <em>Google Authenticatior</em>? <button class="btn
+                                    btn-primary" onclick="closeAndOpen();"> click here</a>
+                                </div>
+
+                            </section>
+                            <section class="row">
+                                <div class="col">
                                     <img th:src="${T(edu.utdallas.cs6303.finalproject.controllers.LoginController).REQUEST_MAPPING}
                                     + @{/qrCode/}" class="img-thumbnail">
                                 </div>
@@ -158,8 +167,104 @@
                 </div>
             </div>
 
+            <div id="userSecret" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"> Information</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <section class="row">
+                                <div class="col">
+                                    Please copy and paste the below fields into the authenticator application.
+                                </div>
+                            </section>
+                            <section class="row">
+                                <div class="col-5">
+                                    username:
+                                </div>
+                                <div class="col-5" id="userName" style="overflow-x: auto"> </div>
+                                <div class="col-2">
+                                    <button class="btn btn-info copybutton" data-target="#userName"><i
+                                            class="fas fa-copy"></i></button>
+                                </div>
+                            </section>
+                            <section class="row">
+                                <div class="col-5">
+                                    secretKey:
+                                </div>
+                                <div class="col-5" id="secretKey" style="overflow-x: auto; white-space: nowrap;"></div>
+                                <div class="col-2">
+                                    <button class="btn btn-info copybutton" data-target="#secretKey"><i
+                                            class="fas fa-copy"></i></button>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <script>
                 $('#qrCode').modal('show');
+                function closeAndOpen() {
+                    $('#qrCode').modal('hide');
+                    $('#userSecret').modal('show');
+                    $.ajax("/login/GetUserSecret").done(function (data) {
+                        $("#userName").text(data.userName).data("value", data.userName);
+                        $("#secretKey").text(data.secretKey.match(/.{1,4}/g).join(' ')).data("value", data.secretKey);
+                    }).fail(function (data) {
+                        alert(data);
+                    });
+                    return true;
+                }
+
+                function fallbackCopyTextToClipboard(text) {
+                    var textArea = document.createElement("textarea");
+                    textArea.value = text;
+
+                    // Avoid scrolling to bottom
+                    textArea.style.top = "0";
+                    textArea.style.left = "0";
+                    textArea.style.position = "fixed";
+
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+
+                    try {
+                        var successful = document.execCommand('copy');
+                        var msg = successful ? 'successful' : 'unsuccessful';
+                        if (!successful) {
+                            alert('unable to copy text to clipboard');
+                        }
+                    } catch (err) {
+                        alert('unable to copy text to clipboard');
+                    }
+
+                    document.body.removeChild(textArea);
+                }
+                function copyTextToClipboard(text) {
+                    if (!navigator.clipboard) {
+                        fallbackCopyTextToClipboard(text);
+                        return;
+                    }
+                    navigator.clipboard.writeText(text).then(function () {
+                    }, function (err) {
+                        alert('unable to copy text to clipboard');
+                    });
+                }
+
+                $(function () {
+                    $('.copybutton').on('click', function (event) {
+                        copyTextToClipboard($($(this).data("target")).data("value"));
+                    });
+                });
+
             </script>
 
         </th:block>
@@ -168,6 +273,54 @@
                 white-space: nowrap;
             }
         </style>
+
+        <script>
+
+            $(function () {
+                function getText() {
+                    let text = "The password should: <ul class=\"no-style\" >" +
+                        validateRegex(/(?=.*[a-z])/, "contain a lowercase letter.") +
+                        validateRegex(/(?=.*[A-Z])/, "contain an uppercase letter.") +
+                        validateRegex(/(?=.*\d)/, "contain a number.") +
+                        validateRegex(/(?=.*[!@#\$%\^&*\)\(+=._-])/, "contain a special character.") +
+                        validateRegex(/.{8,}/, "be 8 or more characters long.") +
+                        "</ul>";
+                    return text;
+                }
+
+                function validateRegex(regex, message) {
+                    let classStr = "";
+                    if (regex.exec($('input[name="password"]').val())) {
+                        classStr = "fas fa-check";
+                    } else {
+                        classStr = "fas fa-ban";
+                    }
+                    return `<li><em class=\"${classStr}\"></em> ${message}</li>`
+                }
+
+                $('input[name="password"]').on("focus input", function () {
+                    $('div.popover-body').html(getText());
+                    if ($(this).val().length == 0) {
+                        $("#passwordeye").hide();
+                    } else {
+                        $("#passwordeye").show();
+                    }
+                }).popover({
+                    content: getText, html: true, trigger: "focus click", placement: 'auto'
+                }).blur(function () {
+                    $(this).popover('hide');
+                });
+
+                $('#passwordeye').on('click', function (event) {
+                    if ($(this).hasClass("fa-eye-slash")) {
+                        $(this).siblings('input[type="text"]').attr("type", "password");
+                    } else {
+                        $(this).siblings('input[type="password"]').attr("type", "text");
+                    }
+                    $(this).toggleClass("fa-eye fa-eye-slash");
+                });
+            });
+        </script>
 
     </div>
 </body>

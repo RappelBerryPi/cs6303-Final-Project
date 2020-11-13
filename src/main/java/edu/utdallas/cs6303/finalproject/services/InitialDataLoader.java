@@ -1,8 +1,10 @@
 package edu.utdallas.cs6303.finalproject.services;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,16 @@ import org.springframework.util.StringUtils;
 import edu.utdallas.cs6303.finalproject.model.database.MimeType;
 import edu.utdallas.cs6303.finalproject.model.database.Privilege;
 import edu.utdallas.cs6303.finalproject.model.database.Role;
+import edu.utdallas.cs6303.finalproject.model.database.StoreItem;
+import edu.utdallas.cs6303.finalproject.model.database.StoreItemSize;
 import edu.utdallas.cs6303.finalproject.model.database.UploadedFile;
 import edu.utdallas.cs6303.finalproject.model.database.User;
+import edu.utdallas.cs6303.finalproject.model.database.enums.StoreItemCategoryEnum;
+import edu.utdallas.cs6303.finalproject.model.database.enums.StoreItemSizeEnum;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.MimeTypeRepository;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.RoleRepository;
+import edu.utdallas.cs6303.finalproject.model.database.repositories.StoreItemRepository;
+import edu.utdallas.cs6303.finalproject.model.database.repositories.StoreItemSizeRepository;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.UploadedFileRepository;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.UserRepository;
 import edu.utdallas.cs6303.finalproject.services.image.ImageResizerInterface;
@@ -54,6 +62,12 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 
     @Autowired
     UserServiceInterface userService;
+
+    @Autowired
+    StoreItemRepository storeItemRepository;
+
+    @Autowired
+    StoreItemSizeRepository storeItemSizeRepository;
 
     @Value("${initialDataLoader.adminUserName}")
     private String adminUserName;
@@ -94,7 +108,42 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
         // process images
         buildUploadedFileRepository();
 
+
+        buildStore();
+
         alreadySetup = true;
+    }
+
+    private void buildStore() {
+        //buildStoreItem("Movie Theater Butter","", "", StoreItemCategoryEnum.CLASSIC);
+    }
+    private void buildStoreItem(String name, String longDescription, String shortDescription, StoreItemCategoryEnum category)  {
+        if (storeItemRepository.findFirstByName(name).isPresent()) {
+            return;
+        }
+        StoreItem storeItem = new StoreItem();
+        storeItem.setAmountInStock(1000);
+        storeItem.setCategory(category);
+        storeItem.setImage(uploadedFileRepository.findByFileNameEndingWith(".jpg").get(new Random().nextInt(10)));
+        storeItem.setLongDescription(longDescription);
+        storeItem.setName(name);
+        storeItem.setShortDescription(shortDescription);
+        storeItem.setVisible(true);
+        List<StoreItemSize> items = new ArrayList<>();
+        int i = 0;
+        for (StoreItemSizeEnum size: StoreItemSizeEnum.values()) {
+            StoreItemSize item = new StoreItemSize();
+            item.setCost(new BigDecimal(i++));
+            item.setSize(size);
+            item.setStoreItem(storeItem);
+            items.add(item);
+        }
+        storeItem.setGroupStoreItems(items);
+        storeItem = storeItemRepository.save(storeItem);
+        for (StoreItemSize item: items) {
+            item.setStoreItem(storeItem);
+        }
+        storeItemSizeRepository.saveAll(items);
     }
 
     private void createUsersAndPrivileges() {

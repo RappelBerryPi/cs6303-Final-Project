@@ -1,22 +1,59 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
-  <head>
-  </head>
+<head>
+</head>
 
-  <body>
-    <header th:fragment="header">
-      <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="/">
-          <img src="/MomAndPop.png" width="40" height="40" />
-          <span class="d-none d-sm-inline"> Mom and Pop's Gourmet Popcorn Co. </span>
-        </a>
-        <div class="nav-right" sec:authorize="isAuthenticated()">
-          <form th:action="@{/logout}" class="form-inline my-2 my-lg-0" method="post">
-            <span th:inline="text" class="navbar-text" style="margin-right: 10px;"> Hello [[${currentUser.firstName}]]! </span>
-              <input class="btn btn-outline-secondary my-2 my-sm-0" type="submit" value="Sign Out"/>
-          </form>
-        </div>
-      </nav>
-    </header>
-  </body>
+<body>
+  <header th:fragment="header">
+    <nav class="navbar navbar-light bg-light">
+      <a class="navbar-brand" href="/">
+        <img src="/MomAndPop.png" width="40" height="40" />
+        <span class="d-none d-sm-inline"> Mom and Pop's Gourmet Popcorn Co. </span>
+      </a>
+      <a href="/Store/ViewCart" class="nav-right" style="margin-right: 5px;">
+        <em class="fas fa-shopping-cart fa-lg text-dark">
+          <span th:if="${currentUser} and ${currentUser.cart} and ${currentUser.cart.cartItems}"
+            class="badge badge-pill badge-info" th:text="${currentUser.cart.cartItems.size()}" id="currentItemCount"></span>
+        </em>
+      </a>
+      <div class="dropdown">
+        <button class="dropdown-toggler hamburger hamburger--spring" type="button" data-toggle="collapse"
+          data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+          </span>
+        </button>
+
+      </div>
+
+      <div class="collapse navbar-collapse" id="navbar-menu">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0 center">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/Store">Shop</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="/About">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/Contact">Contact Us</a>
+          </li>
+          <li sec:authorize="isAuthenticated()" class="nav-item">
+            <form th:action="@{/logout}" method="post">
+              <span th:inline="text" class="navbar-text" style="margin-right: 10px;"> Hello [[${currentUser.firstName}]]!
+              </span>
+              <input class="btn btn-outline-secondary my-2 my-sm-0" type="submit" value="Sign Out" />
+            </form>
+          </li>
+          <li sec:authorize="!isAuthenticated()">
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+</body>
+
 </html>

@@ -3,27 +3,22 @@ package edu.utdallas.cs6303.finalproject.interceptors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import edu.utdallas.cs6303.finalproject.model.database.User;
-import edu.utdallas.cs6303.finalproject.model.database.repositories.UserRepository;
-import edu.utdallas.cs6303.finalproject.services.oauth.OidcUserAuthenticationService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.SmartView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import edu.utdallas.cs6303.finalproject.model.database.User;
+import edu.utdallas.cs6303.finalproject.services.user.UserServiceInterface;
+
 @Component
 public class UserDetailsInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    OidcUserAuthenticationService oAuth2UserAuthenticationService;
+    UserServiceInterface userService;
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
@@ -31,17 +26,9 @@ public class UserDetailsInterceptor extends HandlerInterceptorAdapter {
             User user = null;
             try {
                 SecurityContextImpl contextImpl = (SecurityContextImpl) request.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-                if (contextImpl.getAuthentication() instanceof OAuth2AuthenticationToken) {
-                    OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) contextImpl.getAuthentication();
-                    user = oAuth2UserAuthenticationService.getUserFromOAuth2AuthenticationToken(token);
-                } else {
-                    String userName = contextImpl.getAuthentication().getName();
-                    if (userName != null) {
-                        user = userRepository.findByUsername(userName);
-                    }
-                }
+                user = userService.getUserFromAuthentication(contextImpl.getAuthentication());
             } catch (Exception e) {
-                // todo: nothing
+                //nothing to do, contextImpl is probably null
             }
             if (user == null) {
                 user = new User();

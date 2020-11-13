@@ -44,7 +44,6 @@ public class ImageController {
 
     @GetMapping("")
     public String images() {
-        //TODO: add the javascript to process adding the image name to the file name check box and the upload files box
         return "uploadForm";
     }
 
@@ -93,9 +92,8 @@ public class ImageController {
         return uploadedFileRepository
                 .findAllByMimeTypeMimeTypeStringStartingWith("image")
                 .stream()
-                .map(file -> {
-                    return new ImageTitleAndValue(file.getDescription(), builder.with(file).build());
-                }).collect(Collectors.toList());
+                .map(file -> new ImageTitleAndValue(file.getDescription(), builder.with(file).build()))
+                .collect(Collectors.toList());
     }
 
 }

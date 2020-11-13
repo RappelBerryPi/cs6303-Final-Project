@@ -3,7 +3,6 @@ package edu.utdallas.cs6303.finalproject.main;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.stereotype.Component;
 
 public class CustomWebAuthenticationDetails extends WebAuthenticationDetails {
 

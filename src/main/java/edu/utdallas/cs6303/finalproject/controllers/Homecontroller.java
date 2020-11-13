@@ -16,11 +16,15 @@ public class HomeController {
         return "index";
     }
 
-    @GetMapping("ContactUs")
+    @GetMapping("Contact")
     public String contactUs(Model model) {
         return "contact";
     }
 
-    
+    @GetMapping("About")
+    public String aboutUs(Model model) {
+        return "about";
+    }
+
     public static final String REDIRECT_TO = "redirect:";
 }

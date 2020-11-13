@@ -194,6 +194,10 @@ section {
     .single-form {
         width: 90%;
     }
+    .centered-text {
+        position: initial;
+        transform: unset;
+    }
 }
 
 div.item {
@@ -223,4 +227,18 @@ div.item-selected {
 
 .big-text {
     font-size: 1.5em;
+}
+
+.dropdown {
+    >button.dropdown-toggle.hamburger {
+        line-height: 24px;
+
+        &::after {
+            content: none;
+        }
+    }
+}
+
+.hamburger-inner {
+    margin-top: 0px !important;
 }

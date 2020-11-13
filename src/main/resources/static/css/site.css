@@ -160,6 +160,10 @@ section {
   .single-form {
     width: 90%;
   }
+  .centered-text {
+    position: initial;
+    transform: unset;
+  }
 }
 div.item div.image {
   transform: scale(0.8, 0.8);
@@ -180,4 +184,13 @@ div.item-selected div.image {
 }
 .big-text {
   font-size: 1.5em;
+}
+.dropdown > button.dropdown-toggle.hamburger {
+  line-height: 24px;
+}
+.dropdown > button.dropdown-toggle.hamburger::after {
+  content: none;
+}
+.hamburger-inner {
+  margin-top: 0px !important;
 }

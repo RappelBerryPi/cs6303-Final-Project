@@ -28,7 +28,7 @@ import edu.utdallas.cs6303.finalproject.services.storage.StorageServiceInterface
 import edu.utdallas.cs6303.finalproject.services.storage.enums.StorageServiceSizeEnum;
 
 @Controller
-@RequestMapping(FileUploadController.REQUESTMAPPING)
+@RequestMapping(FileUploadController.REQUEST_MAPPING)
 public class FileUploadController {
 
     @Autowired
@@ -37,7 +37,7 @@ public class FileUploadController {
     @Autowired
     private UploadedFileRepository uploadedFileRepository;
 
-    public static final String REQUESTMAPPING = "/Files";
+    public static final String REQUEST_MAPPING = "/Files";
 
     @GetMapping(value = "/")
     @ResponseBody
@@ -104,7 +104,7 @@ public class FileUploadController {
 
     private ResponseEntity<Resource> processResponseEntity(Resource file) {
         String fileName = file.getFilename();
-        if (fileName.endsWith("jpg") || fileName.endsWith("jpeg") || fileName.endsWith("png") || fileName.endsWith("webp")) {
+        if (fileName != null && (fileName.endsWith("jpg") || fileName.endsWith("jpeg") || fileName.endsWith("png") || fileName.endsWith("webp"))) {
             return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(file);
         } else {
             return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);

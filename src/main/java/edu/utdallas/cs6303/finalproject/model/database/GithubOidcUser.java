@@ -72,7 +72,6 @@ public class GithubOidcUser implements OidcUser {
     private int           diskUsage;
     private int           collaborators;
     private boolean       twoFactorAuthentication;
-    // TODO: determine if necessary??
     @Transient
     private Map<String, Object> plan;
     @Transient

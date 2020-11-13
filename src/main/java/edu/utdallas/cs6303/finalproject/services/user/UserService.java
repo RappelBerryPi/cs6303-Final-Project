@@ -5,7 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,6 +38,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +51,7 @@ import edu.utdallas.cs6303.finalproject.model.database.repositories.RoleReposito
 import edu.utdallas.cs6303.finalproject.model.database.repositories.UserRepository;
 import edu.utdallas.cs6303.finalproject.model.database.repositories.UserTOTPRepository;
 import edu.utdallas.cs6303.finalproject.model.validation.CreateUserForm;
+import edu.utdallas.cs6303.finalproject.services.oauth.OidcUserAuthenticationService;
 
 @Service
 public class UserService implements UserServiceInterface {
@@ -72,6 +76,9 @@ public class UserService implements UserServiceInterface {
 
     @Autowired
     private GoogleAuthenticator googleAuthenticator;
+
+    @Autowired
+    OidcUserAuthenticationService oAuth2UserAuthenticationService;
 
     @Override
     public User createUserFromUserForm(CreateUserForm createUserForm) {
@@ -194,14 +201,41 @@ public class UserService implements UserServiceInterface {
         }
         userTOTPRepository.deleteByUserName(userName);
         userTOTPRepository.flush();
-        GoogleAuthenticatorKey key = googleAuthenticator.createCredentials(userName);
-        String otpAuthURL = GoogleAuthenticatorQRGenerator.getOtpAuthTotpURL("Mom and Pop's Shop", userName, key);
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(otpAuthURL, BarcodeFormat.QR_CODE, 200, 200);
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        GoogleAuthenticatorKey key          = googleAuthenticator.createCredentials(userName);
+        String                 otpAuthURL   = GoogleAuthenticatorQRGenerator.getOtpAuthTotpURL("Mom and Pop's Gourmet Popcorn Shop", userName, key);
+        QRCodeWriter           qrCodeWriter = new QRCodeWriter();
+        BitMatrix              bitMatrix    = qrCodeWriter.encode(otpAuthURL, BarcodeFormat.QR_CODE, 200, 200);
+        ByteArrayOutputStream  os           = new ByteArrayOutputStream();
         ImageIO.write(MatrixToImageWriter.toBufferedImage(bitMatrix), "png", os);
         Resource resource = new InputStreamResource(new ByteArrayInputStream(os.toByteArray()));
         return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(resource);
+
+    }
+
+    @Override
+    public User getUserFromAuthentication(Authentication authentication) {
+        User user = null;
+        if (authentication instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
+            user = oAuth2UserAuthenticationService.getUserFromOAuth2AuthenticationToken(token);
+        } else {
+            String userName = authentication.getName();
+            if (userName != null) {
+                user = userRepository.findByUsername(userName);
+            }
+        }
+        return user;
+    }
+
+    @Override
+    // This uses text blocks. for more info look at https://openjdk.java.net/jeps/378.
+    public Map<String, String> getUserSecret(Authentication authentication) {
+        User user = this.getUserFromAuthentication(authentication);
+        String secretKey = googleAuthenticator.getCredentialRepository().getSecretKey(user.getUsername());
+        Map<String, String> returnMap = new HashMap<>();
+        returnMap.put("userName", user.getUsername());
+        returnMap.put("secretKey", secretKey);
+        return returnMap;
 
     }
 }

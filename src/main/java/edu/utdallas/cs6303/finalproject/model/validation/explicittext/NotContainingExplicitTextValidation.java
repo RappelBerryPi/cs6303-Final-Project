@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintValidator;
@@ -29,6 +30,6 @@ public class NotContainingExplicitTextValidation implements ConstraintValidator<
             return true;
         }
         final String lowercaseValue = value.toLowerCase();
-        return !disallowedWords.stream().anyMatch(s -> lowercaseValue.contains(s));
+        return disallowedWords.stream().noneMatch(s -> Pattern.matches(".*\\b" + s + "\\b.*", lowercaseValue));
     }
 }

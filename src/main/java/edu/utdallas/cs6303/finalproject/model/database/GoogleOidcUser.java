@@ -37,7 +37,6 @@ public class GoogleOidcUser implements OidcUser {
     private String locale;
     private String nonce;           // to help protect against replay attacks
     private String profilePicture;
-    // TODO: fix
     @Transient
     private List<String>        serverClientId;          // aud
     private String              clientID;                // azp

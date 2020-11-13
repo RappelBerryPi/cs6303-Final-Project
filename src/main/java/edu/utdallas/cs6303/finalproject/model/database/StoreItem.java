@@ -1,7 +1,10 @@
 package edu.utdallas.cs6303.finalproject.model.database;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +17,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import edu.utdallas.cs6303.finalproject.model.database.enums.StoreItemCategoryEnum;
 
@@ -26,22 +30,7 @@ public class StoreItem {
     private String name;
 
     @Column(precision = 16, scale = 2)
-    private BigDecimal snackCost;
-
-    @Column(precision = 16, scale = 2)
-    private BigDecimal xsCost;
-
-    @Column(precision = 16, scale = 2)
-    private BigDecimal smallCost;
-
-    @Column(precision = 16, scale = 2)
-    private BigDecimal mediumCost;
-
-    @Column(precision = 16, scale = 2)
-    private BigDecimal largeCost;
-
-    @Column(precision = 16, scale = 2)
-    private BigDecimal doubleXlCost;
+    private BigDecimal cost;
 
     @ManyToOne
     @JoinColumn(name = "image_id", foreignKey = @ForeignKey(name = "FK_StoreItem_FeaturedPhoto"))
@@ -56,8 +45,6 @@ public class StoreItem {
     @Column
     private String longDescription;
 
-    //TODO: ?? is active/ can purchase
-
     private Date openDate;
 
     private Date archiveDate;
@@ -67,6 +54,9 @@ public class StoreItem {
     private long amountInStock;
     
     private boolean deleted;
+
+    @OneToMany(mappedBy = "storeItem")
+    private List<StoreItemSize> groupStoreItems;
 
     public long getId() {
         return id;
@@ -145,56 +135,31 @@ public class StoreItem {
     }
 
     public boolean isActive() {
-        //TODO: base this off of open and close date amount in stock, and if visible also if deleted
-        return true; 
+        var retVal = false;
+        if (this.isVisible() && !this.isDeleted() && this.openDateIsNullOrLessThanToday() && this.archiveDateIsNullOrGreaterThanToday()) {
+            retVal = true;
+        }
+        return retVal;
     }
 
-    public BigDecimal getSnackCost() {
-        return snackCost;
+    private boolean openDateIsNullOrLessThanToday() {
+        if (this.openDate == null) {
+            return true;
+        }
+        if (this.openDate.compareTo(new Date()) <= 0) {
+            return true;
+        }
+        return false;
     }
 
-    public void setSnackCost(BigDecimal snackCost) {
-        this.snackCost = snackCost;
-    }
-
-    public BigDecimal getXsCost() {
-        return xsCost;
-    }
-
-    public void setXsCost(BigDecimal xsCost) {
-        this.xsCost = xsCost;
-    }
-
-    public BigDecimal getSmallCost() {
-        return smallCost;
-    }
-
-    public void setSmallCost(BigDecimal smallCost) {
-        this.smallCost = smallCost;
-    }
-
-    public BigDecimal getMediumCost() {
-        return mediumCost;
-    }
-
-    public void setMediumCost(BigDecimal mediumCost) {
-        this.mediumCost = mediumCost;
-    }
-
-    public BigDecimal getLargeCost() {
-        return largeCost;
-    }
-
-    public void setLargeCost(BigDecimal largeCost) {
-        this.largeCost = largeCost;
-    }
-
-    public BigDecimal getDoubleXlCost() {
-        return doubleXlCost;
-    }
-
-    public void setDoubleXlCost(BigDecimal doubleXlCost) {
-        this.doubleXlCost = doubleXlCost;
+    private boolean archiveDateIsNullOrGreaterThanToday() {
+        if (this.archiveDate == null) {
+            return true;
+        }
+        if (this.archiveDate.compareTo(new Date()) > 0) {
+            return true;
+        }
+        return false;
     }
 
     public StoreItemCategoryEnum getCategory() {
@@ -203,6 +168,22 @@ public class StoreItem {
 
     public void setCategory(StoreItemCategoryEnum category) {
         this.category = category;
+    }
+
+    public BigDecimal getCost() {
+        return cost;
+    }
+
+    public void setCost(BigDecimal cost) {
+        this.cost = cost;
+    }
+
+    public List<StoreItemSize> getGroupStoreItems() {
+        return groupStoreItems.stream().sorted(Comparator.comparing(StoreItemSize::getSize)).collect(Collectors.toList());
+    }
+
+    public void setGroupStoreItems(List<StoreItemSize> groupStoreItems) {
+        this.groupStoreItems = groupStoreItems;
     }
 
 }

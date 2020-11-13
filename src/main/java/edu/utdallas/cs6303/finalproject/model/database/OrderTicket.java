@@ -11,11 +11,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 @Entity
-public class Order {
+public class OrderTicket {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @OneToMany(mappedBy = "order")
@@ -31,8 +34,18 @@ public class Order {
     @Column(precision = 16, scale = 2)
     private BigDecimal tax;
 
+    private String payPalOrderId;
+
     public long getId() {
         return id;
+    }
+
+    public String getPayPalOrderId() {
+        return payPalOrderId;
+    }
+
+    public void setPayPalOrderId(String payPalOrderId) {
+        this.payPalOrderId = payPalOrderId;
     }
 
     public List<OrderItem> getOrderItems() {

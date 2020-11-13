@@ -12,7 +12,7 @@
     <div layout:fragment="content" class="container-fluid">
         <section class="row" style="max-width: 90%; margin: 0 auto; margin-bottom: 5px;">
 
-            <form th:action="${T(edu.utdallas.cs6303.finalproject.controllers.StoreController).REQUEST_MAPPING} + @{/new/}"
+            <form th:action="${T(edu.utdallas.cs6303.finalproject.controllers.StoreController).REQUEST_MAPPING} + ${T(edu.utdallas.cs6303.finalproject.controllers.StoreController).NEW_STORE_ITEM_MAPPING}"
                 th:object="${item}" method="post" class="center">
                 <div th:replace="~{fragments/errorInForm.html :: errorInForm}"></div>
                 <section class="rounded" style="background-color: white;">
@@ -44,7 +44,7 @@
                                 </div>
                                 <input type="text" th:field="*{snackCost}" class="form-control" aria-label="The Cost of The item"
                                     placeholder="0.00"
-                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.ItemForm).COST_REGEX}" />
+                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.SingleItemForm).COST_REGEX}" />
                                 <label class="floating-label text-secondary" for="snackCost">snack cost</label>
                             </div>
                             <div class="input-group">
@@ -53,7 +53,7 @@
                                 </div>
                                 <input type="text" th:field="*{xsCost}" class="form-control" aria-label="The Cost of The item"
                                     placeholder="0.00"
-                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.ItemForm).COST_REGEX}" />
+                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.SingleItemForm).COST_REGEX}" />
                                 <label class="floating-label text-secondary" for="xsCost">Xtra-small cost</label>
                             </div>
                             <div class="input-group">
@@ -62,7 +62,7 @@
                                 </div>
                                 <input type="text" th:field="*{smallCost}" class="form-control" aria-label="The Cost of The item"
                                     placeholder="0.00"
-                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.ItemForm).COST_REGEX}" />
+                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.SingleItemForm).COST_REGEX}" />
                                 <label class="floating-label text-secondary" for="smallCost">small cost</label>
                             </div>
                             <div class="input-group">
@@ -71,7 +71,7 @@
                                 </div>
                                 <input type="text" th:field="*{mediumCost}" class="form-control" aria-label="The Cost of The item"
                                     placeholder="0.00"
-                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.ItemForm).COST_REGEX}" />
+                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.SingleItemForm).COST_REGEX}" />
                                 <label class="floating-label text-secondary" for="mediumCost">medium cost</label>
                             </div>
                             <div class="input-group">
@@ -80,7 +80,7 @@
                                 </div>
                                 <input type="text" th:field="*{largeCost}" class="form-control" aria-label="The Cost of The item"
                                     placeholder="0.00"
-                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.ItemForm).COST_REGEX}" />
+                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.SingleItemForm).COST_REGEX}" />
                                 <label class="floating-label text-secondary" for="largeCost">large cost</label>
                             </div>
                             <div class="input-group">
@@ -89,7 +89,7 @@
                                 </div>
                                 <input type="text" th:field="*{doubleXlCost}" class="form-control" aria-label="The Cost of The item"
                                     placeholder="0.00"
-                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.ItemForm).COST_REGEX}" />
+                                    th:pattern="${T(edu.utdallas.cs6303.finalproject.model.validation.store.SingleItemForm).COST_REGEX}" />
                                 <label class="floating-label text-secondary" for="doubleXlCost">double extra large cost</label>
                             </div>
                             <div class="form-group">

@@ -1,0 +1,192 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{fragments/main}"
+    xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <title>View Cart</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container-fluid center">
+        <section class="row">
+            <div class='col'>
+                <h1>Ready to Check out?</h1>
+            </div>
+        </section>
+        <section class="row center">
+            <ul class="list-group" style="width: 90%; margin: 0 auto;">
+                <li th:each="cartItem: ${userCartSummary.entrySet()}" class="list-group-item">
+                    <div class="row">
+                        <div class="col-4">
+                            <h3 th:text="${cartItem.getKey().name}"></h3>
+                        </div>
+                        <div class="col-8" style="overflow-x: auto">
+                            <table class="table">
+                                <tr>
+                                    <th scope="col">Size</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Cost</th>
+                                    <th scope="col">Subtotal</th>
+                                </tr>
+                                <tr th:each="cartSummary: ${cartItem.getValue()}">
+                                    <td th:text="${cartSummary.size}"></td>
+                                    <td>
+                                        <form>
+                                            <div class="form-group">
+                                                <input type="number" class="form-control" th:value="${cartSummary.count}">
+                                                <input type="hidden" th:value="${cartSummary.storeItemSizeId}">
+                                            </div>
+                                        </form>
+                                    </td>
+                                    <td th:text="${cartSummary.cost}"></td>
+                                    <td th:text="${cartSummary.count} * ${cartSummary.cost}"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </section>
+        <section class="row center">
+            <div class="col-lg-4"></div>
+            <div class="col-lg-4">
+                <table class="table">
+                    <tr>
+                        <th scope="row">
+                            subtotal:
+                        </th>
+                        <td id="subtotal" th:text="${subtotal}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            tax:
+                        </th>
+                        <td id="tax" th:text="${tax}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            shipping:
+                        </th>
+                        <td>Free</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            Total:
+                        </th>
+                        <td id="total" th:text="${subtotal} + ${tax}"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-lg-4"></div>
+        </section>
+        <script
+            src="https://www.paypal.com/sdk/js?client-id=Abbr12yG8gwRsKm88YS0tXRbQg354qGTAAouZVh5cfrzFd1hyMGD1hjpi36DhsInZ6NODB2xF2PEdFXy"></script>
+        <section class="row">
+            <section class="col center">
+                <div id="paypal-button-container"></div>
+            </section>
+        </section>
+        <script>
+            $(function () {
+                $("input[type='number']").on("change", function (event) {
+                    let this_number = $(this);
+                    console.log($(this).siblings("input[type='hidden']").val());
+                    let token = $("meta[name='_csrf']").attr("content");
+                    let header = $("meta[name='_csrf_header']").attr("content");
+                    $.ajax({
+                        type: "POST",
+                        url: "[[${T(edu.utdallas.cs6303.finalproject.controllers.StoreController).REQUEST_MAPPING} + '/DeleteItemFromCart/']]",
+                        data: {
+                            itemSizeId: $(this).siblings("input[type='hidden']").val(),
+                            newQuantity: $(this).val()
+                        },
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        headers: {
+                            [header]: token
+                        },
+                        success: function (data) {
+                            let lastSibling = this_number.parent().parent().parent().parent().children().last();
+                            lastSibling.text(data.itemSubtotal.toFixed(2));
+                            $("#subtotal").text(data.subtotal);
+                            $("#tax").text(data.tax);
+                            $("#total").text(data.total);
+                            $("#currentItemCount").text(data.totalItemCount).addClass("animated").addClass("rubberBand");
+                            $("#currentItemCount").on("animationend", function () {
+                                $(this).removeClass("animated").removeClass("rubberBand");
+                            });
+                        },
+                        error: function (e) {
+                            alert(e.responseJSON);
+                        }
+                    })
+                });
+                paypal.Buttons({
+                    createOrder: function () {
+                        let token = $("meta[name='_csrf']").attr("content");
+                        let header = $("meta[name='_csrf_header']").attr("content");
+                        return fetch('/Store/CreateOrder', {
+                            method: 'post',
+                            headers: {
+                                'content-type': 'application/json',
+                                [header]: token
+                            }
+                        }).then(function (res) {
+                            return res.json();
+                        }).then(function (data) {
+                            return data.result.id;
+                        });
+                    },
+                    onApprove: function (data, actions) {
+                        return actions.order.capture().then(function (details) {
+                            $("#thankYouModalBody").text("Thank you " + details.payer.name.given_name + " for your payment!");
+                            $("#thankYouModal").modal('show');
+                            return data.orderID;
+                        }).then(function (orderId) {
+                            let token = $("meta[name='_csrf']").attr("content");
+                            let header = $("meta[name='_csrf_header']").attr("content");
+                            fetch('/Store/OrderPaidFor', {
+                                method: 'post',
+                                headers: {
+                                    'content-type': 'application/json',
+                                    [header]: token
+                                },
+                                body: orderId
+                            }).then(function (res) {
+                                return res.json();
+                            }).then(function (data) {
+                                $("#thankYouModal").on('hidden.bs.modal', function (event) {
+                                    window.location.href = data[0];
+                                });
+                            });
+                        });
+                    }
+                }).render('#paypal-button-container');
+
+            });
+
+
+        </script>
+
+        <div class="modal fade" id="thankYouModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="thankYouModalTitle">Thank you for your payment!</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="thankYouModalBody">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

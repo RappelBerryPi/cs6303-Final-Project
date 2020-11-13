@@ -1,8 +1,10 @@
 package edu.utdallas.cs6303.finalproject.model.database;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
@@ -13,6 +15,7 @@ import javax.persistence.OneToOne;
 public class Cart {
 
   @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
   @OneToOne
@@ -24,11 +27,11 @@ public class Cart {
       name = "cartID", 
       referencedColumnName = "id"
     ), inverseJoinColumns = @JoinColumn(
-      name = "storeItemID", 
+      name = "storeItemSizeID", 
       referencedColumnName = "id"
     )
   )
-  private Collection<StoreItem> cartItems;
+  private List<StoreItemSize> cartItems;
 
   public long getId() {
     return id;
@@ -42,11 +45,11 @@ public class Cart {
     this.user = user;
   }
 
-  public Collection<StoreItem> getCartItems() {
+  public List<StoreItemSize> getCartItems() {
     return cartItems;
   }
 
-  public void setCartItems(Collection<StoreItem> cartItems) {
+  public void setCartItems(List<StoreItemSize> cartItems) {
     this.cartItems = cartItems;
   }
 

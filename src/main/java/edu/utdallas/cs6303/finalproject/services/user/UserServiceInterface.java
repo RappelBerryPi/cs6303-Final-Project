@@ -3,6 +3,7 @@ package edu.utdallas.cs6303.finalproject.services.user;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,4 +39,8 @@ public interface UserServiceInterface {
     List<Privilege> getBasicEmployeePrivileges();
     
     ResponseEntity<Resource> getQRCode(Authentication authentication) throws WriterException, IOException;
+
+    User getUserFromAuthentication(Authentication authentication);
+
+    Map<String, String> getUserSecret(Authentication authentication);
 }

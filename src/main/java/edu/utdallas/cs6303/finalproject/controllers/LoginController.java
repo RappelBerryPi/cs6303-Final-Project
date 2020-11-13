@@ -2,6 +2,7 @@ package edu.utdallas.cs6303.finalproject.controllers;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -43,9 +44,6 @@ import edu.utdallas.cs6303.finalproject.services.user.UserServiceInterface;
 @RequestMapping(LoginController.REQUEST_MAPPING)
 public class LoginController {
 
-    // TODO: create a safehtml class to validate safehtml and especially for form
-    // inputs such as LOB objects.
-
     @Autowired
     private OidcUserAuthenticationService oidcUserAuthenticationService;
 
@@ -82,7 +80,7 @@ public class LoginController {
     }
 
     @PostMapping("/createUser")
-    public String createUserStep2(@Valid CreateUserForm createUserForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request) throws WriterException {
+    public String createUserStep2(@Valid CreateUserForm createUserForm, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult." + CREATE_USER_FORM_ATTRIBUTE_NAME, bindingResult);
             redirectAttributes.addFlashAttribute(CREATE_USER_FORM_ATTRIBUTE_NAME, createUserForm);
@@ -105,6 +103,12 @@ public class LoginController {
         return userService.getQRCode(authentication);
     }
 
+    @GetMapping("/GetUserSecret")
+    @ResponseBody
+    public Map<String, String> getUserSecret(Authentication authentication) {
+        return userService.getUserSecret(authentication);
+    }
+
     private static final String FORGOT_PASSWORD_FORM_ATTRIBUTE_NAME = "forgotPasswordForm";
 
     @GetMapping("/forgotPassword")
@@ -124,8 +128,9 @@ public class LoginController {
             return HomeController.REDIRECT_TO + LoginController.REQUEST_MAPPING + "/forgotPassword";
         }
         LoggerFactory.getLogger(HomeController.class).info(forgotPasswordForm.getEmailAddress());
-        LoggerFactory.getLogger(HomeController.class).info(forgotPasswordForm.getUserName());
-        return HomeController.REDIRECT_TO + LoginController.REQUEST_MAPPING + "/forgotPassword/2";
+        LoggerFactory.getLogger(HomeController.class).info("TODO in a real scenario: validating user and resetting password");
+        redirectAttributes.addFlashAttribute("passwordResetEmailSent", true);
+        return HomeController.REDIRECT_TO + LoginController.REQUEST_MAPPING;
     }
 
     @PostMapping("/checkEmail")

@@ -139,7 +139,7 @@ public class ImageResizer implements ImageResizerInterface {
         String       fileNameWebP = fileName + ".webp";
         UploadedFile file         = uploadedFileRepository.findByFileName(fileName);
         if (file == null) {
-            file = new UploadedFile(FileUploadController.REQUESTMAPPING + "/" + fileName);
+            file = new UploadedFile(FileUploadController.REQUEST_MAPPING + "/" + fileName);
         }
         file.setHasWebP(storageService.exists(fileNameWebP, StorageServiceSizeEnum.ROOT));
 

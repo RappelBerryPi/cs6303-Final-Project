@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml" layout:decorate="~{fragments/main}"
+    xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <title>View Item</title>
+</head>
+
+<body>
+    <div layout:fragment="content" class="container center">
+        <section class="row">
+            <div class='col'>
+                <h1 th:text="${item.name}"></h1>
+            </div>
+        </section>
+        <section class="row">
+            <div class='col'>
+                <h3 th:text="${item.shortDescription}"> </h3>
+            </div>
+        </section>
+        <section class="row">
+            <div class="col">
+                <img th:src="${imageURLBuilder.forDeviceInfo(deviceInfo).with(item.image).build()}" th:alt="${item.image.description}" class="img-fluid">
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <select id="size" class="custom-select">
+                        <option selected value="">Choose a size</option>
+                        <option th:each="storeItems: ${item.groupStoreItems}" th:value="${storeItems.size}" th:text="${#strings.capitalize(#strings.toLowerCase(storeItems.size))} + ' - ' +
+                        ${storeItems.cost}">
+                        </option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <button class="btn btn-primary" id="add">Add to Cart</button>
+                </div>
+            </div>
+        </section>
+        <hr />
+        <section class="row">
+            <div class='col' th:utext="${item.longDescription}">
+            </div>
+        </section>
+        <script th:inline="text">
+            $(function() {
+                $("#add").click(function() {
+                    let token = $("meta[name='_csrf']").attr("content");
+                    let header = $("meta[name='_csrf_header']").attr("content");
+                    $.ajax({
+                        type: "POST",
+                        url: "[[${T(edu.utdallas.cs6303.finalproject.controllers.StoreController).REQUEST_MAPPING} + '/AddItemToCart/' + ${item.id}]]",
+                        data: {
+                            itemSize: $("#size").val()
+                        },
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        headers: {
+                            [header]: token
+                        },
+                        success: function (data) {
+                            $("#currentItemCount").text(data).addClass("animated").addClass("rubberBand");
+                            $("#currentItemCount").on("animationend", function() {
+                                $(this).removeClass("animated").removeClass("rubberBand");
+                            });
+                        },
+                        error: function (e) {
+                            alert(e.responseJSON);
+                        }
+                    });
+                });
+            });
+        </script>
+    </div>
+</body>
+
+</html>

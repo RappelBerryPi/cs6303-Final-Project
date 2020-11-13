@@ -5,6 +5,8 @@ import java.time.ZonedDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -13,13 +15,14 @@ import javax.persistence.OneToOne;
 public class OrderItem {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     
     @OneToOne
-    private StoreItem storeItem;
+    private StoreItemSize storeItem;
 
     @ManyToOne
-    private Order order;
+    private OrderTicket order;
 
     @Column(precision = 16, scale = 2)
     private BigDecimal costAtPurchaseTime;
@@ -40,19 +43,19 @@ public class OrderItem {
         return id;
     }
 
-    public StoreItem getStoreItem() {
+    public StoreItemSize getStoreItem() {
         return storeItem;
     }
 
-    public void setStoreItem(StoreItem storeItem) {
+    public void setStoreItem(StoreItemSize storeItem) {
         this.storeItem = storeItem;
     }
 
-    public Order getOrder() {
+    public OrderTicket getOrder() {
         return order;
     }
 
-    public void setOrder(Order order) {
+    public void setOrder(OrderTicket order) {
         this.order = order;
     }
 

@@ -18,10 +18,10 @@
 </head>
 
 <body>
-    <div layout:fragment="content" class="container-fluid" style="height: 90vh; position: relative;">
-        <form th:action="@{/login/createUser}" th:object="${createUserForm}" method="post">
+    <div layout:fragment="content" class="container-fluid">
+        <form th:action="@{/login/createUser}" th:object="${createUserForm}" method="post" class="center">
             <div th:replace="~{fragments/errorInForm.html :: errorInForm}"></div>
-            <section class="centered-text single-form rounded" style="background-color: white;">
+            <section class="center single-form rounded" style="background-color: white; margin: 10px auto;" >
                 <div sec:authorize="isAnonymous()" class="row" style="margin-bottom: 10px">
                     <h1 class="center"> Sign Up</h1>
                 </div>
@@ -72,20 +72,11 @@
                             <em class="fab fa-google"></em> Sign in with Google
                         </button>
                     </div>
-                    <div class="col">
-                        <button id="github-button" class="btn btn-block btn-social btn-github btn-outline-dark"
-                            onclick="GithubOAuth()">
-                            <em class="fab fa-github"></em> Sign in with Github
-                        </button>
-                        <script>
-                            function GoogleOAuth() {
-                                window.location.href = "/oauth2/authorization/google";
-                            }
-                            function GithubOAuth() {
-                                window.location.href = "/oauth2/authorization/github";
-                            }
-                        </script>
-                    </div>
+                    <script>
+                        function GoogleOAuth() {
+                            window.location.href = "/oauth2/authorization/google";
+                        }
+                    </script>
                 </div>
             </section>
         </form>
@@ -121,7 +112,7 @@
                         $("#passwordEye").show();
                     }
                 }).popover({
-                    content: getText, html: true, trigger: "focus click"
+                    content: getText, html: true, trigger: "focus click", placement: 'auto'
                 }).blur(function () {
                     $(this).popover('hide');
                 });

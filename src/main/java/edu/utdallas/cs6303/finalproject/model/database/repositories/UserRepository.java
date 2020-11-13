@@ -4,8 +4,6 @@ import edu.utdallas.cs6303.finalproject.model.database.GithubOidcUser;
 import edu.utdallas.cs6303.finalproject.model.database.GoogleOidcUser;
 import edu.utdallas.cs6303.finalproject.model.database.User;
 
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

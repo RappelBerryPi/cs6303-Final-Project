@@ -14,14 +14,14 @@ public interface ImageFileURLBuilderInterface {
     public String build();
 
     default String buildThumbnailURL(UploadedFile file) {
-        return FileUploadController.REQUESTMAPPING + "/" + DeviceInfo.capitalize(StorageServiceSizeEnum.THUMBNAIL) + "/" + file.getFileName();
+        return FileUploadController.REQUEST_MAPPING + "/" + DeviceInfo.capitalize(StorageServiceSizeEnum.THUMBNAIL) + "/" + file.getFileName();
     }
 
     default String buildLargeURL(UploadedFile file) {
-        return FileUploadController.REQUESTMAPPING + "/" + DeviceInfo.capitalize(StorageServiceSizeEnum.LARGE) + "/" + file.getFileName();
+        return FileUploadController.REQUEST_MAPPING + "/" + DeviceInfo.capitalize(StorageServiceSizeEnum.LARGE) + "/" + file.getFileName();
     }
 
     default String getBaseThumbnailURL() {
-        return FileUploadController.REQUESTMAPPING + "/" + DeviceInfo.capitalize(StorageServiceSizeEnum.THUMBNAIL) + "/";
+        return FileUploadController.REQUEST_MAPPING + "/" + DeviceInfo.capitalize(StorageServiceSizeEnum.THUMBNAIL) + "/";
     }
 }
