@@ -10,6 +10,7 @@
             position: fixed;
             width: 25%;
             align-items: stretch;
+            z-index: 1;
         }
 
         #sidebar {
@@ -22,15 +23,6 @@
             margin-left: -250px;
         }
 
-        @media (max-width: 768px) {
-            #sidebar {
-                margin-left: -250px;
-            }
-
-            #sidebar.active {
-                margin-left: 0;
-            }
-        }
 
         a,
         a:hover,
@@ -102,7 +94,7 @@
         <div class="container">
             <div class="row">
                 <button class="hamburger--arrowturn hamburger" type="button" role="button" data-toggle="#sidebar" id="toggleSidebar"
-                    aria-haspopup="true" aria-expanded="false">
+                    aria-haspopup="true" aria-expanded="false" style="z-index: 2;">
                     <span class="hamburger-box">
                         <span class="hamburger-inner"></span>
                     </span>

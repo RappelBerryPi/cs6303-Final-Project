@@ -18,10 +18,10 @@
 </head>
 
 <body>
-    <div layout:fragment="content" class="container-fluid">
+    <div layout:fragment="content" class="container-fluid" style="height: 90vh; position: relative;">
         <form th:action="@{/login/createUser}" th:object="${createUserForm}" method="post" class="center">
             <div th:replace="~{fragments/errorInForm.html :: errorInForm}"></div>
-            <section class="center single-form rounded" style="background-color: white; margin: 10px auto;" >
+            <section class="centered-text single-form rounded" style="background-color: white; margin: 10px auto;" >
                 <div sec:authorize="isAnonymous()" class="row" style="margin-bottom: 10px">
                     <h1 class="center"> Sign Up</h1>
                 </div>
@@ -53,7 +53,7 @@
                             <input type="password" th:field="*{password}" class="form-control" aria-label="The user password."
                                 placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%\^&*\)\(+=._-]).{8,}" />
                             <label class="floating-label text-secondary" for="password">Password</label>
-                            <i id="passwordEye" style="position: absolute; right: 12px; top: 30%; z-index: 1; display: none;"
+                            <i id="passwordeye" style="position: absolute; right: 12px; top: 30%; z-index: 1; display: none;"
                                 class="fa fa-eye"></i>
                         </div>
                         <div class="form-group">
@@ -205,6 +205,13 @@
                     }
                     $(this).toggleClass("fa-eye fa-eye-slash");
                 })
+
+
+                if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+                    $('div.container-fluid').css("height",$('section.single-form')[0].clientHeight + 90 + "px");
+                    $("div.container-fluid").css("margin","10px 0")
+                }
+
             });
 
         </script>

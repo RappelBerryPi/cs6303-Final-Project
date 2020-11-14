@@ -48,7 +48,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
                 .logout().permitAll();
 
-        // https://localhost:8443/oauth2/authorization/google
     }
 
     @Bean
