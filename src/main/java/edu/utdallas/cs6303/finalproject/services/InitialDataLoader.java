@@ -78,8 +78,10 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
     @Value("${initialDataLoader.adminUserEmail}")
     private String adminUserEmail;
 
-    // we're assuming that this is being run in a local origin based sales tax state (such as texas) and so the sales
-    // tax will be the same no matter the destination. We are also assuming that shipping is only happening in the same
+    // we're assuming that this is being run in a local origin based sales tax state
+    // (such as texas) and so the sales
+    // tax will be the same no matter the destination. We are also assuming that
+    // shipping is only happening in the same
     // or nearby zip codes and as such there is no need for several zip codes.
 
     @Override
@@ -108,16 +110,29 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
         // process images
         buildUploadedFileRepository();
 
-
         buildStore();
 
         alreadySetup = true;
     }
 
     private void buildStore() {
-        //buildStoreItem("Movie Theater Butter","", "", StoreItemCategoryEnum.CLASSIC);
+        buildStoreItem("Movie Theater Butter","The Epic classic revisited with layers of delicious butter drizzled on top. This salty wonder will have your tastebuds delighted for days.", "Buttery, Salty, nothing beats the original.", StoreItemCategoryEnum.CLASSIC);
+        buildStoreItem("Cheddar","This Popcorn is covered in our special Cheddar seasoning, we even use Real Cheese!", "Salty, Cheesy, Perfect.", StoreItemCategoryEnum.CLASSIC);
+        buildStoreItem("Kettle Corn","Kettle corn is a sweet mix of Sweet and Delicious, try a bag!", "Nothing like the classic taste of YUM!", StoreItemCategoryEnum.CLASSIC);
+
+        buildStoreItem("Pumpkin Pie Drizzle","You've got Pumpkin Spice everything, here's one more for the books.", "Is it Fall Yet?", StoreItemCategoryEnum.SEASONAL);
+        buildStoreItem("Caramel Apple","Is Your mouth watering yet? What's better than caramel covered apples? Popcorn!", "Sweeter than Honey, As tart as you want. Zangy, and Tasty", StoreItemCategoryEnum.SEASONAL);
+        buildStoreItem("Hot Cocoa","Can someone say 'Polar Express?!?", "We got Hot Chocolate!", StoreItemCategoryEnum.SEASONAL);
+
+        buildStoreItem("Rainbow","Its colorful and delicious", "See the Rainbow, Believe in the flavors, taste it and believe", StoreItemCategoryEnum.FAVORITES);
+        buildStoreItem("Birthday Cake","Its colorful and Fun (not to mention delicious)!", "Happy Birthday!", StoreItemCategoryEnum.FAVORITES);
+        buildStoreItem("Honey Butter","Just like Mammaw used to make, but you know, in popcorn form.", "Honey, Butter, what more is there to say? Try it, love it, eat it.", StoreItemCategoryEnum.FAVORITES);
+
+        buildStoreItem("Paradise Blend","Ever wanted to have a Pina Colada, and a Margarita? Here's your chance!", "Wisk me away to good times.", StoreItemCategoryEnum.BLENDS);
+        buildStoreItem("Sweet and Savory Blend","Sweet, Savory, Buttery, Deliciousness all wrapped in a little bow, What's stopping you from trying it?", "The best of both worlds!", StoreItemCategoryEnum.BLENDS);
     }
-    private void buildStoreItem(String name, String longDescription, String shortDescription, StoreItemCategoryEnum category)  {
+
+    private void buildStoreItem(String name, String longDescription, String shortDescription, StoreItemCategoryEnum category) {
         if (storeItemRepository.findFirstByName(name).isPresent()) {
             return;
         }
@@ -130,8 +145,8 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
         storeItem.setShortDescription(shortDescription);
         storeItem.setVisible(true);
         List<StoreItemSize> items = new ArrayList<>();
-        int i = 0;
-        for (StoreItemSizeEnum size: StoreItemSizeEnum.values()) {
+        int                 i     = 0;
+        for (StoreItemSizeEnum size : StoreItemSizeEnum.values()) {
             StoreItemSize item = new StoreItemSize();
             item.setCost(new BigDecimal(i++));
             item.setSize(size);
@@ -140,19 +155,19 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
         }
         storeItem.setGroupStoreItems(items);
         storeItem = storeItemRepository.save(storeItem);
-        for (StoreItemSize item: items) {
+        for (StoreItemSize item : items) {
             item.setStoreItem(storeItem);
         }
         storeItemSizeRepository.saveAll(items);
     }
 
     private void createUsersAndPrivileges() {
-        List<Privilege> userPrivileges = userService.getBasicUserPrivileges();
+        List<Privilege> userPrivileges     = userService.getBasicUserPrivileges();
         List<Privilege> employeePrivileges = userService.getBasicEmployeePrivileges();
-        List<Privilege> adminPrivileges = userService.getAdminPrivileges();
+        List<Privilege> adminPrivileges    = userService.getAdminPrivileges();
 
-        Role adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        Role userRole = createRoleIfNotFound("ROLE_USER", userPrivileges);
+        Role adminRole    = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
+        Role userRole     = createRoleIfNotFound("ROLE_USER", userPrivileges);
         Role employeeRole = createRoleIfNotFound("ROLE_EMPLOYEE", employeePrivileges);
         createRoleIfNotFound("ROLE_ANONYMOUS", null);
 
